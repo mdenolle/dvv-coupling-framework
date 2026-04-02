@@ -1,0 +1,4 @@
+# Requirements for dvv_framework companion notebooks
+numpy>=1.20
+scipy>=1.7
+matplotlib>=3.5

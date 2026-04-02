@@ -1,0 +1,15 @@
+[workspace]
+authors = ["Marine Denolle <mdenolle@uw.edu>"]
+channels = ["conda-forge"]
+name = "dvv-coupling-framework"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+lab = { cmd = "jupyter lab analysis/", description = "Open JupyterLab in the analysis folder" }
+
+[dependencies]
+numpy = ">=2.4.3,<3"
+scipy = ">=1.17.1,<2"
+matplotlib = ">=3.10.8,<4"
+jupyterlab = ">=4.5.6,<5"
