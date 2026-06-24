@@ -50,7 +50,7 @@ The calculation chains in §9 are transparent and reproducible. I verified:
 **Cascadia (§9.2.3):**
 - $\mu' = 2 \times 0.475 \times 3160/4.86 = 618$: ✓
 - $\dot{\sigma}_{\text{iso}} = 2 \times 0.475 \times 10^9 \times 3.8 \times 10^{-4}/618 = 0.583$ kPa/yr: ✓
-- Cross-check: $4.86 \times 10^9 \times 1.2 \times 10^{-7} = 0.583$ kPa/yr: ✓ exact match
+- Cross-check: $4.86 \times 10^9 \times 1.2 \times 10^{-7} = 0.583$ kPa/yr: ✓ calibration-consistent
 
 **Remaining issues:**
 

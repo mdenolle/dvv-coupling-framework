@@ -7,9 +7,18 @@ version = "0.1.0"
 
 [tasks]
 lab = { cmd = "jupyter lab analysis/", description = "Open JupyterLab in the analysis folder" }
+test = { cmd = "pytest tests/", description = "Run the unit test suite", env = { MPLBACKEND = "Agg" } }
+paper-pdf = { cmd = "python paper/build_jgr_pdf.py", description = "Build the JGR-style manuscript PDF from Markdown" }
 
 [dependencies]
 numpy = ">=2.4.3,<3"
 scipy = ">=1.17.1,<2"
 matplotlib = ">=3.10.8,<4"
 jupyterlab = ">=4.5.6,<5"
+numba = ">=0.60,<1"
+pydantic = ">=2.13.4,<3"
+pytest = ">=9.0.3,<10"
+pyyaml = ">=6.0.3,<7"
+
+[pypi-dependencies]
+disba = ">=0.7.0,<1"

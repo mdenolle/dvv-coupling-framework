@@ -15,6 +15,8 @@ $^2$ Anthropic, San Francisco, CA
 
 This repository contains the manuscript, companion Jupyter notebooks, and figures for a research paper that develops a unified theoretical framework for interpreting ambient-noise-derived seismic velocity changes (dv/v) across environmental, tectonic, and volcanic settings.
 
+This repository is the research and validation substrate for the planned `codameter` software package. The reusable package should implement the workflow here as stable APIs, while this repository keeps the paper, derivations, sensitivity studies, and worked examples.
+
 The framework connects:
 - **Murnaghan (1937)** third-order elasticity → acoustoelastic parameter β
 - **Berger (1975)** thermoelastic stress → temperature-induced dv/v
@@ -26,6 +28,18 @@ The framework connects:
 
 through the common thread of **nonlinear elasticity**.
 
+### What this code does — and doesn't
+
+**It does:**
+- Compute forward models of dv/v under thermoelastic, hydrological, and poroelastic forcing.
+- Provide a validated input schema (`SiteConfig` / `AnalysisConfig`) with literature-sourced presets (Parkfield, Cascadia, Nepal, agricultural soil).
+- Run tier-wise coupling diagnostics and three synthetic case studies (Ridgecrest, drought-flood, Parkfield tidal).
+
+**It does not:**
+- Process raw seismic waveforms or compute ambient-noise cross-correlations.
+- Perform full Bayesian or 3-D stress/strain inversion (the joint-inversion framework is proposed in the manuscript, not implemented here). A lightweight Bayesian model average is included for coda-window method uncertainty.
+- Ship the proprietary Clements & Denolle (2023) parquet data; synthetic generators are used by default (see [docs/data_sources.md](docs/data_sources.md)).
+
 ## Repository Structure
 
 ```
@@ -36,7 +50,7 @@ through the common thread of **nonlinear elasticity**.
 │
 ├── paper/
 │   ├── paper_dvv_unified_framework.md     # Full manuscript (Markdown + LaTeX math)
-│   └── references.bib                     # BibTeX bibliography (to populate)
+│   └── references.bib                     # Machine-readable bibliography
 │
 ├── analysis/                              # All executable code in one place
 │   ├── 01_thermoelastic_model.ipynb       # Berger (1975) + Richter (2014) model
@@ -47,10 +61,14 @@ through the common thread of **nonlinear elasticity**.
 │   ├── 06_sensitivity_validity.ipynb      # Parameter space & regime diagram
 │   ├── coupling_diagnostic_cases.py       # Ridgecrest / drought-flood / Parkfield tidal cases
 │   └── coupling_tier_tests.py             # Tier 1/2/3 coupling validation tests
+├── codameter/                             # Prototype core APIs for reproducible dv/v workflows
+│   └── window_selection.py                # Coda-window scoring and ranking metrics
 │
 ├── figures/
-│   ├── notebooks/                         # Outputs from scenario model notebooks
-│   │   └── fig01–fig18 (.png)           # 18 publication-quality figures
+│   ├── main/                              # Streamlined JGR main figure set
+│   │   └── fig01–fig07 (.png)
+│   ├── notebooks/                         # Supporting outputs from scenario notebooks
+│   │   └── fig01–fig18 (.png)
 │   └── coupling/                          # Outputs from coupling analysis scripts
 │       └── case1–case3, tier1–tier3 (.png)
 │
@@ -89,8 +107,79 @@ cd dvv-coupling-framework
 pixi install
 ```
 
-Dependencies (numpy, scipy, matplotlib, jupyterlab) are resolved automatically via `pixi.toml`.
+Dependencies (numpy, scipy, matplotlib, pydantic, jupyterlab) are resolved automatically via `pixi.toml`.
 No proprietary code, data, or API keys are needed.
+
+Alternatively, install the Python package directly with pip:
+
+```bash
+pip install -e ".[test]"   # editable install with test extras
+```
+
+## Quick Start
+
+Compute a coda sensitivity depth and drainage regime for a named preset in
+under two minutes:
+
+```python
+from analysis import PARKFIELD, AnalysisConfig, validate_and_summarize, sensitivity_depth
+
+# One number: depth sampled by 2 Hz coda in granite (third-wavelength rule)
+print(sensitivity_depth(Vs_mps=2500, freq_hz=2.0))   # -> 416.7 m
+
+# Full diagnostic summary for a validated configuration
+cfg = AnalysisConfig(site=PARKFIELD, frequency_hz=3.0)
+print(validate_and_summarize(cfg))
+```
+
+Load a named recipe from `presets/` instead of building a config by hand:
+
+```python
+from analysis.config import load_analysis_config
+cfg = load_analysis_config("presets/cascadia_subduction.yaml")
+```
+
+Compute a rolling coda-window profile before committing to a `dv/v` interpretation:
+
+```python
+from codameter import WindowEstimate, bayesian_window_average
+from codameter import rolling_lapse_windows, score_lapse_profile
+
+windows = rolling_lapse_windows(
+    start_s=2,
+    stop_s=35,
+    window_duration_s=5,
+    step_s=1,
+    fmin_hz=2,
+    fmax_hz=4,
+)
+
+profile = score_lapse_profile(
+    windows,
+    observations={
+        "lapse_000": {"coherence": 0.9, "snr": 10.0, "dvv_sigma": 2e-5},
+        "lapse_001": {"coherence": 0.85, "snr": 9.0, "dvv_sigma": 3e-5},
+    },
+    distance_m=10000.0,
+    rayleigh_group_velocity_mps=1000.0,
+    vs_mps=1500.0,
+    target_depth_range_m=(100, 250),
+)
+print(profile.centers_s, profile.objective)
+
+posterior = bayesian_window_average(
+    profile,
+    estimates={
+        "lapse_000": WindowEstimate(mean=1.0e-4, sigma=1.0e-5),
+        "lapse_001": WindowEstimate(mean=1.1e-4, sigma=1.2e-5),
+        "lapse_002": WindowEstimate(mean=4.0e-4, sigma=1.5e-5),
+    },
+)
+print(posterior.mean, posterior.epistemic_sigma)
+```
+
+Run the test suite with `pixi run test` (or `pytest tests/`).
+The machine-readable list of worked examples lives in [docs/tutorials.yaml](docs/tutorials.yaml).
 
 ## Reproducing Figures
 
@@ -98,9 +187,23 @@ No proprietary code, data, or API keys are needed.
 # Launch JupyterLab directly in the analysis folder
 pixi run lab
 # Execute notebooks 01 through 06 in order
+
+# Regenerate the streamlined JGR main figure set
+pixi run python analysis/jgr_main_figures.py
 ```
 
 Figures are committed under `figures/notebooks/` (scenario models) and `figures/coupling/` (data analysis).
+The JGR-ready main figure set is generated by `analysis/jgr_main_figures.py` and written to `figures/main/`; detailed notebook figures are cited as Supporting Information in `paper/supporting_information.md`.
+
+## Building the Manuscript PDF
+
+```bash
+pixi run paper-pdf
+```
+
+This converts `paper/paper_dvv_unified_framework.md` to `paper/build/paper_dvv_jgr_submission.tex` with Pandoc, then compiles `paper/build/paper_dvv_jgr_submission.pdf` with XeLaTeX. The local template is a JGR-style submission layout (12 pt, double-spaced, line numbered); it is not the official AGU `agujournal2019.cls`, which is not vendored in this repository.
+
+The same command also writes `paper/build/paper_dvv_agutex_jgr_solid_earth.tex`, an AGUTeX source file configured with `\journalname{JGR: Solid Earth}` for the official AGU/Overleaf `agujournal2019` template. Overleaf lists official AGU JGR templates for the shared AGUTeX class, but no separate JGR: Solid Earth template was found; use the official AGU JGR template and preserve the `figures/main/` paths when uploading the generated source and figures.
 
 ## Key Results
 
@@ -110,10 +213,11 @@ Figures are committed under `figures/notebooks/` (scenario models) and `figures/
 4. **Dynamic capillary effects** produce hysteretic $\delta v/v$ in partially saturated soils (Shi et al., 2026).
 5. **Stress-induced anisotropy** from microcrack closure explains Parkfield's contractional-strain correlation.
 6. **Material microstructure** (crack density, cementation, grain contacts) controls nonlinear sensitivity.
-7. **Multi-frequency $\delta v/v$ + GNSS/InSAR** enables depth-resolved 3-D stress/strain imaging.
-8. **Six alternative mechanisms** beyond nonlinear elasticity are systematically assessed.
-9. **Spatial generalization** requires 3-D velocity models, $V_P/V_S$, density, geotechnical, and geodetic data.
-10. **Linear acoustoelasticity** valid for strains below ~10⁻⁵; bibliography now contains ~60 OA references.
+7. **Multi-frequency $\delta v/v$ + GNSS/InSAR** may enable depth-resolved 3-D stress/strain imaging when sensitivity kernels and material constraints are available.
+8. **Coda-window selection** is treated as a physical part of the measurement, with reproducible metrics implemented in `codameter.window_selection`.
+9. **Six alternative mechanisms** beyond nonlinear elasticity are systematically assessed.
+10. **Spatial generalization** requires 3-D velocity models, $V_P/V_S$, density, geotechnical, and geodetic data.
+11. **Linear acoustoelasticity** valid for strains below ~10⁻⁵; the manuscript includes a full reference list and a BibTeX seed bibliography.
 
 ## Citation
 

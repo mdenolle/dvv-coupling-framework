@@ -34,88 +34,29 @@ from scipy.special import erf, erfc
 from scipy.integrate import quad
 import os
 
-# Create output directory
-os.makedirs('/home/claude/figures', exist_ok=True)
+try:  # package import
+    from .config import PARKFIELD, CASCADIA, NEPAL, AGRICULTURAL
+except ImportError:  # flat import (run from within analysis/)
+    from config import PARKFIELD, CASCADIA, NEPAL, AGRICULTURAL
+
+# Output directory for figures (repo-relative; override with $DVV_FIGDIR).
+FIGDIR = os.environ.get(
+    "DVV_FIGDIR",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "figures", "coupling"),
+)
+os.makedirs(FIGDIR, exist_ok=True)
 
 # =============================================================================
-# Material property database (from literature)
+# Material property database
 # =============================================================================
+# Site properties now live in the validated `config.SiteConfig` schema. The
+# module-level aliases below preserve the original variable names so the tier
+# functions read unchanged.
 
-class Site:
-    """Container for site-specific material properties."""
-    pass
-
-# Parkfield: fractured Salinian granite at ~0.8 km depth
-parkfield = Site()
-parkfield.name = "Parkfield (granite)"
-parkfield.Vs = 2500.0         # m/s (SAFOD, Jeppson & Tobin 2015)
-parkfield.rho = 2500.0        # kg/m³
-parkfield.mu = parkfield.rho * parkfield.Vs**2  # 15.6 GPa
-parkfield.nu = 0.25           # Poisson's ratio
-parkfield.kappa = 2*parkfield.mu*(1+parkfield.nu)/(3*(1-2*parkfield.nu))  # ~26 GPa
-parkfield.mu_prime = 251.0    # From manuscript Table 2
-parkfield.beta = -240.0       # From manuscript Table 2
-parkfield.alpha_B = 0.7       # Biot coefficient (fractured rock)
-parkfield.B_skemp = 0.4       # Skempton coeff (partially drained granite)
-parkfield.perm = 1e-15        # Permeability m² (fault zone)
-parkfield.phi = 0.05          # Porosity
-parkfield.depth = 800.0       # Sensitivity depth, m
-parkfield.kappa_T = 1.0e-6    # Thermal diffusivity m²/s
-parkfield.alpha_T = 8e-6      # Thermal expansion K⁻¹
-
-# Cascadia: marine sediment at ~0.2 km depth below seafloor
-cascadia = Site()
-cascadia.name = "Cascadia (sediment)"
-cascadia.Vs = 500.0           # m/s (Han et al. 2017)
-cascadia.rho = 1900.0         # kg/m³
-cascadia.mu = cascadia.rho * cascadia.Vs**2  # 0.475 GPa
-cascadia.nu = 0.40            # High Poisson's ratio (soft sediment)
-cascadia.kappa = 2*cascadia.mu*(1+cascadia.nu)/(3*(1-2*cascadia.nu))  # ~4.4 GPa
-cascadia.mu_prime = 618.0     # From manuscript Table 2
-cascadia.beta = -3160.0       # From manuscript Table 2
-cascadia.alpha_B = 0.95       # Biot coefficient (unconsolidated)
-cascadia.B_skemp = 0.75       # Skempton coeff (high-porosity, saturated)
-cascadia.perm = 1e-13         # Permeability m² (accretionary wedge)
-cascadia.phi = 0.40           # Porosity
-cascadia.depth = 200.0        # Sensitivity depth, m
-cascadia.kappa_T = 0.5e-6     # Thermal diffusivity m²/s
-cascadia.alpha_T = 5e-6       # Thermal expansion K⁻¹
-
-# Nepal Himalayas: post-Gorkha earthquake (Illien et al. 2022)
-nepal = Site()
-nepal.name = "Nepal (post-earthquake)"
-nepal.Vs = 1500.0             # m/s (average shallow crust)
-nepal.rho = 2400.0
-nepal.mu = nepal.rho * nepal.Vs**2  # 5.4 GPa
-nepal.nu = 0.28
-nepal.kappa = 2*nepal.mu*(1+nepal.nu)/(3*(1-2*nepal.nu))
-nepal.mu_prime = 150.0        # Moderate fractured rock
-nepal.beta = -150.0 * nepal.kappa / (2*nepal.mu)
-nepal.alpha_B = 0.8
-nepal.B_skemp = 0.5
-nepal.perm = 1e-14            # Pre-earthquake
-nepal.phi = 0.10
-nepal.depth = 300.0
-nepal.kappa_T = 0.8e-6
-nepal.alpha_T = 7e-6
-
-# Agricultural soil: vadose zone (Shi et al. 2026)
-agri = Site()
-agri.name = "Agricultural soil"
-agri.Vs = 200.0               # m/s (near-surface soil)
-agri.rho = 1600.0
-agri.mu = agri.rho * agri.Vs**2  # 0.064 GPa
-agri.nu = 0.35
-agri.kappa = 2*agri.mu*(1+agri.nu)/(3*(1-2*agri.nu))
-agri.mu_prime = 2000.0        # Very high for unconsolidated
-agri.beta = -2000.0 * agri.kappa / (2*agri.mu)
-agri.alpha_B = 0.99           # Nearly 1 for soil
-agri.B_skemp = 0.90
-agri.perm = 1e-11             # Sandy soil
-agri.phi = 0.45
-agri.depth = 5.0              # Very shallow
-agri.kappa_T = 0.3e-6
-agri.alpha_T = 10e-6
+parkfield = PARKFIELD
+cascadia = CASCADIA
+nepal = NEPAL
+agri = AGRICULTURAL
 
 sites = [parkfield, cascadia, nepal, agri]
 
@@ -228,9 +169,10 @@ def tier1_drained_undrained_transition():
         # absorbs part of the load, reducing effective stress change
         # In drained, all load goes to effective stress
         
-        # For a surface load T33 in Fokker formulation:
+        # For a surface load T33 in Fokker formulation
+        # using a positive-compression convention:
         # Drained: δVs/Vs = (-μ'/2μ)·0 + (μ'+1)/(12μ)·T33 [pore pressure = 0]
-        T33 = -1000.0  # Pa, compressive
+        T33 = 1000.0  # Pa, compressive
         dvv_drained_fokker = (site.mu_prime + 1) / (12 * site.mu) * T33
         
         # Undrained: δVs/Vs = (-μ'/2μ)·B(1+ν_u)/(3(1-ν_u))·T33 + ...
@@ -264,7 +206,7 @@ def tier1_drained_undrained_transition():
     ax.grid(True, alpha=0.3, axis='y')
     
     plt.tight_layout()
-    plt.savefig('/home/claude/figures/tier1_poroelastic_coupling.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(FIGDIR, 'tier1_poroelastic_coupling.png'), dpi=150, bbox_inches='tight')
     plt.close()
     
     print("TIER 1 — Poroelastic Coupling Results:")
@@ -441,7 +383,7 @@ def tier2_damage_permeability():
     ax.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('/home/claude/figures/tier2_damage_permeability.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(FIGDIR, 'tier2_damage_permeability.png'), dpi=150, bbox_inches='tight')
     plt.close()
     
     print("TIER 2 — Damage-Permeability Coupling Results:")
@@ -580,7 +522,7 @@ def tier3_saturation_beta():
     ax.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('/home/claude/figures/tier3_saturation_nonlinearity.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(FIGDIR, 'tier3_saturation_nonlinearity.png'), dpi=150, bbox_inches='tight')
     plt.close()
     
     print("TIER 3 — Saturation-Dependent Nonlinearity Results:")
@@ -763,7 +705,7 @@ def prognostic_scenarios():
     ax.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('/home/claude/figures/prognostic_scenarios.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(FIGDIR, 'prognostic_scenarios.png'), dpi=150, bbox_inches='tight')
     plt.close()
     
     print("PROGNOSTIC SCENARIOS:")
@@ -886,7 +828,7 @@ def coupling_regime_diagram():
     ax.grid(True, alpha=0.2)
     
     plt.tight_layout()
-    plt.savefig('/home/claude/figures/coupling_regime_diagram.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(FIGDIR, 'coupling_regime_diagram.png'), dpi=150, bbox_inches='tight')
     plt.close()
     
     print("COUPLING REGIME DIAGRAM generated.")
@@ -976,7 +918,7 @@ if __name__ == "__main__":
     coupling_regime_diagram()
     print_parameter_summary()
     
-    print("\nAll figures saved to /home/claude/figures/")
+    print(f"\nAll figures saved to {FIGDIR}/")
     print("Files: tier1_poroelastic_coupling.png")
     print("       tier2_damage_permeability.png")
     print("       tier3_saturation_nonlinearity.png")

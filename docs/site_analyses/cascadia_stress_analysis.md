@@ -40,7 +40,7 @@ This is ~5× larger than Parkfield ($\mu' \approx 250$), explained by: (1) near-
 
 **2019 fluid pulse pore pressure:** Using $\delta V_S/V_S = -\mu' u^0/(2\mu)$ with $\delta v/v \approx -0.1\%$: $u^0 = 2\mu \cdot 0.001/\mu' = 2 \times 2.1 \times 10^9 \times 0.001/1290 \approx$ **3 kPa** (calibrated $\beta$) to **10 kPa** ($\beta = 10^3$).
 
-**Locking ratio from $\delta v/v$ contrast:** (0.1–0.3 Hz) North: 0.006%/yr, Central: 0.003%/yr. Ratio = **0.5** — exactly matching the geodetic locking model.
+**Locking ratio from $\delta v/v$ contrast:** (0.1–0.3 Hz) North: 0.006%/yr, Central: 0.003%/yr. Ratio = **0.5** — consistent with the geodetic locking contrast under comparable-kernel and comparable-material-sensitivity assumptions.
 
 ---
 

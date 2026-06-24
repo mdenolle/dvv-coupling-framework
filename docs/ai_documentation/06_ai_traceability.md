@@ -152,7 +152,7 @@
 - Extracted numbers from Kidiwela et al. (2026): +0.038%/yr at 1–3 Hz, β = 3160 from borehole calibration
 - Web-searched for Cascadia velocity profiles: Ridge-to-Trench models, USGS CVM v1.7, Zhu et al. (2020)
 - Computed: μ = 0.475 GPa, κ = 4.86 GPa, μ' = 618
-- Stress rate: 0.58 kPa/yr — exact match to borehole
+- Stress rate: 0.58 kPa/yr — calibration-consistent with the borehole-derived strain comparison
 - Quantified 2016 slow slip (0.09–0.30 kPa stress drop, 0.4–1.2 cm slip)
 - Quantified 2019 fluid pulse (~2–4 kPa transient pore pressure)
 - Cross-site comparison: Cascadia dv/v 8× larger but stress 20× smaller
@@ -195,6 +195,49 @@
 - Journal assessment: JGR primary, GJI backup, GRL possible with restructuring
 - Created this AI traceability document
 - Final packaging of repository
+
+### Session 18 (JGR figure strategy and GPT-5.5 AI statement)
+
+**Human prompt:**
+20. "Targetted journal is JGR-Solid Earth. Review whether there are too many figures, some should likely be in appendices/supplement, to make the story clean. add an ai_statement for this review with gpt5.5 in the ai_documentation."
+
+**AI actions:**
+- Audited the manuscript's 18 current figures for JGR Solid Earth narrative fit.
+- Recommended reducing the main display set to approximately 7-8 figures/tables and moving roughly 10 figures to Supporting Information.
+- Identified the need for a new three-site synthesis figure and merged anisotropy/rheology figures.
+- Flagged the current AI co-author line as a likely JGR/AGU policy risk requiring verification before submission.
+- Attempted to verify AGU author-resource pages, but `agu.org` was Cloudflare-blocked from the execution environment.
+- Created `docs/review/jgr_figure_strategy_2026-06-19.md`.
+- Created `docs/ai_documentation/07_ai_statement_gpt55_review.md`.
+
+### Session 19 (Figure strategy implementation and JGR PDF build)
+
+**Human prompts:**
+21. "perform the tasks for the recommended figure strategy"
+22. "compile the AGU JGR PDF from a markdown -> tex -> pdf."
+23. "you can check overleaf templates"
+
+**AI actions:**
+- Implemented the streamlined JGR main figure strategy with seven main figures and supporting-information routing.
+- Added a Markdown to TeX to PDF build pipeline for the manuscript.
+- Generated a local JGR-style review PDF at `paper/build/paper_dvv_jgr_submission.pdf`.
+- Checked official AGU Overleaf templates and found the shared `agujournal2019` AGUTeX class with `JGR: Solid Earth` as a supported journal name.
+- Added an AGUTeX source export at `paper/build/paper_dvv_agutex_jgr_solid_earth.tex` for use in the official AGU Overleaf template.
+- Documented the Overleaf template check in `docs/review/overleaf_agutex_template_check_2026-06-20.md`.
+
+### Session 20 (Coda-window reproducibility and `codameter` prototype)
+
+**Human prompt:**
+24. "one thing is ultra annoying in our domain is that there is very little best-practice for choosing the coda window length, the filtering, the substacking length, the beginnin and end of the coda window... what if we actually solved the reproducibilty crisis by developing metrics to systematically compute the dv/v in the best possible window?"
+
+**AI actions:**
+- Verified the DOI metadata for Takano et al. (2019), JGR Solid Earth, `10.1029/2018JB016235`, as support for lapse-time-dependent strain sensitivity.
+- Reframed the manuscript observable as `dv/v(f, tau, W, T_stack, t)` rather than only `dv/v(f,t)`.
+- Added Section 7.4 on lapse-time windows as part of the sensitivity kernel.
+- Added a `codameter` prototype package with coda-window scoring and ranking APIs.
+- Added tests for window validation, cycle count, wave-type scoring, depth targeting, and ranked window selection.
+- Added `docs/theory/coda_window_selection_metrics.md` as the implementation rationale.
+- Updated README examples and key results to include reproducible coda-window selection.
 
 ---
 
@@ -279,4 +322,4 @@ repo/
 2. **No hidden AI contribution.** The AI co-authorship is declared in the byline, abstract, and Statement of AI Use.
 3. **Reproducibility.** Every calculation in §9 can be reproduced from the cited inputs in ~50 lines of Python.
 4. **Self-review bias acknowledged.** The same AI system generated and reviewed the manuscript. The convergence analysis (§5 of `05_convergence_and_evaluation.md`) discusses this limitation and proposes mitigations (cross-model review, human expert validation).
-5. **The bridge relation caveat.** The directional application of Eq. 7 is flagged as approximate. The exact match at Cascadia and factor-of-1.4 agreement at Parkfield provide empirical bounds on the approximation error.
+5. **The bridge relation caveat.** The directional application of Eq. 7 is flagged as approximate. The calibration-consistent Cascadia comparison and factor-of-1.4 agreement at Parkfield provide empirical bounds on the approximation error.

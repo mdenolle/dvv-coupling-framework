@@ -28,7 +28,7 @@ We thank the reviewer for the careful second-round evaluation. Below we address 
 
 ### 5. "[repository URL]" placeholder
 
-**Fixed.** Data Availability now reads: "available at https://doi.org/10.5281/zenodo.XXXXXXX (to be minted before publication)."
+**Fixed.** Data Availability now states that the notebooks and figure-generation code will be archived on Zenodo before publication, with the archive DOI pending.
 
 ### 6. Obermann (2013) vs. (2014) citation mismatch
 

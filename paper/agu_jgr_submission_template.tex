@@ -1,0 +1,60 @@
+\documentclass[12pt]{article}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp}
+\else
+  \usepackage{fontspec}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{calc}
+\usepackage{graphicx}
+\makeatletter
+\define@key{Gin}{alt}{}
+\makeatother
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{lineno}
+\usepackage{microtype}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue,
+  pdftitle={$title$},
+  pdfauthor={$author$}
+}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\pandocbounded}[1]{#1}
+
+\setcounter{secnumdepth}{0}
+\captionsetup{font=small,labelfont=bf}
+\newcounter{none}
+\doublespacing
+
+\title{\textbf{$title$}}
+\author{$author$\\
+\small $affiliation$\\
+\small Corresponding author: $corresponding_author$}
+\date{}
+
+\begin{document}
+\maketitle
+\linenumbers
+
+$body$
+
+\end{document}

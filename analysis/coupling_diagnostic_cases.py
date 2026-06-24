@@ -39,7 +39,12 @@ import os
 import warnings
 warnings.filterwarnings('ignore')
 
-os.makedirs('/home/claude/figures', exist_ok=True)
+# Output directory for figures (repo-relative; override with $DVV_FIGDIR).
+FIGDIR = os.environ.get(
+    "DVV_FIGDIR",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "figures", "coupling"),
+)
+os.makedirs(FIGDIR, exist_ok=True)
 
 # =============================================================================
 # UTILITY FUNCTIONS
@@ -243,11 +248,25 @@ def generate_parkfield_synthetic(years=(2001, 2023)):
     }
 
 
+def _emit_plan(case_name, config, params):
+    """Print and return the analysis plan for a dry run (no computation)."""
+    lines = [f"[dry-run] {case_name}"]
+    if config is not None:
+        lines.append(f"  site: {config.site.name}")
+        lines.append(f"  frequency_hz: {config.frequency_hz}")
+        lines.append(f"  rule: {config.rule}")
+    for key, val in params.items():
+        lines.append(f"  {key}: {val}")
+    print("\n".join(lines))
+    return {"status": "dry_run", "case": case_name,
+            "config": config, "params": params}
+
+
 # =============================================================================
 # CASE 1: RIDGECREST POST-EARTHQUAKE COEFFICIENT CHANGE
 # =============================================================================
 
-def case1_split_window_regression(data, window_years=2.0):
+def case1_split_window_regression(data, window_years=2.0, config=None, dry_run=False):
     """
     Case 1: Test for Tier 2 coupling by comparing seasonal regression 
     coefficients before and after the Ridgecrest earthquake.
@@ -255,7 +274,15 @@ def case1_split_window_regression(data, window_years=2.0):
     Method: Fit δv/v = a1·T + a2·GWL + a0 in sliding or split windows.
     If a2 changes after the earthquake while a1 remains stable, this 
     diagnoses earthquake-modified hydrological sensitivity.
+
+    Pass ``dry_run=True`` to print the analysis plan without computing.
     """
+    if dry_run:
+        return _emit_plan(
+            "case1_split_window_regression", config,
+            {"n_samples": len(data['t_days']),
+             "window_years": window_years, "step_days": 90},
+        )
     t = data['t_days']
     dvv = data['dvv']
     temp = data['temp']
@@ -393,7 +420,7 @@ def plot_case1(data, results):
     ax.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('/home/claude/figures/case1_ridgecrest_split_window.png', 
+    plt.savefig(os.path.join(FIGDIR, 'case1_ridgecrest_split_window.png'), 
                 dpi=150, bbox_inches='tight')
     plt.close()
 
@@ -402,14 +429,21 @@ def plot_case1(data, results):
 # CASE 2: DROUGHT-TO-FLOOD SATURATION-DEPENDENT β
 # =============================================================================
 
-def case2_saturation_sensitivity(data, api_window=90):
+def case2_saturation_sensitivity(data, api_window=90, config=None, dry_run=False):
     """
     Case 2: Test for Tier 3 coupling by examining whether δv/v sensitivity
     to precipitation depends on antecedent moisture conditions.
     
     Method: Compute antecedent precipitation index (API), then measure
     d(δv/v)/d(precip) in sliding windows and plot against API.
+
+    Pass ``dry_run=True`` to print the analysis plan without computing.
     """
+    if dry_run:
+        return _emit_plan(
+            "case2_saturation_sensitivity", config,
+            {"n_samples": len(data['dvv']), "api_window": api_window},
+        )
     precip = data['precip']
     dvv = data['dvv']
     dec_years = data['dec_years']
@@ -562,7 +596,7 @@ def plot_case2(data, results):
     ax.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('/home/claude/figures/case2_saturation_sensitivity.png', 
+    plt.savefig(os.path.join(FIGDIR, 'case2_saturation_sensitivity.png'), 
                 dpi=150, bbox_inches='tight')
     plt.close()
 
@@ -571,14 +605,22 @@ def plot_case2(data, results):
 # CASE 3: PARKFIELD TIDAL β TIME-VARIATION
 # =============================================================================
 
-def case3_tidal_beta_evolution(data, stack_days=180, step_days=30):
+def case3_tidal_beta_evolution(data, stack_days=180, step_days=30, config=None, dry_run=False):
     """
     Case 3: Extract M2 tidal amplitude from Parkfield δv/v in sliding 
     windows and track changes around the 2004 earthquake.
     
     Method: Harmonic regression at the M2 period (12.42 hr = 0.5175 days)
     in sliding windows. Track amplitude over time.
+
+    Pass ``dry_run=True`` to print the analysis plan without computing.
     """
+    if dry_run:
+        return _emit_plan(
+            "case3_tidal_beta_evolution", config,
+            {"n_samples": len(data['dvv']),
+             "stack_days": stack_days, "step_days": step_days},
+        )
     t_days = data['t_days']
     dvv = data['dvv']
     dec_years = data['dec_years']
@@ -735,7 +777,7 @@ def plot_case3(data, results):
                fontsize=9, style='italic', alpha=0.7)
     
     plt.tight_layout()
-    plt.savefig('/home/claude/figures/case3_parkfield_tidal_beta.png', 
+    plt.savefig(os.path.join(FIGDIR, 'case3_parkfield_tidal_beta.png'), 
                 dpi=150, bbox_inches='tight')
     plt.close()
 
@@ -917,7 +959,7 @@ if __name__ == "__main__":
     Then run the same analysis and plotting functions.
     """)
     
-    print("\nAll figures saved to /home/claude/figures/")
+    print(f"\nAll figures saved to {FIGDIR}/")
     print("  case1_ridgecrest_split_window.png")
     print("  case2_saturation_sensitivity.png")
     print("  case3_parkfield_tidal_beta.png")

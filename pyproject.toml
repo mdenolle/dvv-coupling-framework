@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dvv-coupling-framework"
+version = "0.2.0"
+description = "Unified framework for interpreting seismic velocity changes (dv/v) as stress and strain meters"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "CC-BY-4.0" }
+authors = [
+    { name = "Marine A. Denolle", email = "mdenolle@uw.edu" },
+]
+keywords = [
+    "ambient noise monitoring",
+    "seismic velocity changes",
+    "nonlinear elasticity",
+    "poroelasticity",
+    "thermoelastic stress",
+    "rheology",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy>=2.0,<3",
+    "scipy>=1.13,<2",
+    "matplotlib>=3.8,<4",
+    "pydantic>=2.5,<3",
+    "pyyaml>=6.0,<7",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+notebooks = ["jupyterlab>=4", "disba>=0.7.0,<1", "numba>=0.60,<1"]
+
+[project.urls]
+Repository = "https://github.com/mdenolle/dvv-coupling-framework"
+
+[tool.setuptools]
+packages = ["analysis", "codameter"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

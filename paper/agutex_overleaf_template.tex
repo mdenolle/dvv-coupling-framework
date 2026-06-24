@@ -1,0 +1,51 @@
+\documentclass[draft]{agujournal2019}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage{lineno}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{graphicx}
+\makeatletter
+\define@key{Gin}{alt}{}
+\makeatother
+\usepackage{hyperref}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\pandocbounded}[1]{#1}
+
+\linenumbers
+\draftfalse
+\journalname{JGR: Solid Earth}
+
+\begin{document}
+
+\title{$title$}
+
+\authors{Marine A. Denolle\affil{1}}
+
+\affiliation{1}{Department of Earth and Space Sciences, University of Washington, Seattle, WA, USA}
+
+\correspondingauthor{Marine A. Denolle}{mdenolle@uw.edu}
+
+\begin{keypoints}
+$for(keypoints)$
+\item $keypoints$
+$endfor$
+\end{keypoints}
+
+\begin{abstract}
+$abstract$
+\end{abstract}
+
+\section*{Plain Language Summary}
+$plain_language_summary$
+
+$body$
+
+\end{document}

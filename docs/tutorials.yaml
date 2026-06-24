@@ -1,0 +1,67 @@
+# Machine-readable index of worked-example notebooks and scripts.
+# Agents and humans can enumerate available workflows from this file.
+tutorials:
+  - id: "00_quickstart"
+    title: "Quick Start: sensitivity depth and drainage regime"
+    file: "analysis/00_quickstart.ipynb"
+    runtime_minutes: 2
+    keywords: ["beginner", "quickstart", "sensitivity", "drainage"]
+    output: "Sensitivity-depth value and drainage-regime classification"
+    learning_goal: >
+      Run the framework end-to-end on a named preset in under two minutes.
+
+  - id: "01_thermoelastic_model"
+    title: "Thermoelastic dv/v (Berger 1975 + Richter 2014)"
+    file: "analysis/01_thermoelastic_model.ipynb"
+    runtime_minutes: 8
+    keywords: ["temperature", "thermal", "annual cycle"]
+    output: "Temperature profile and thermoelastic dv/v time series"
+
+  - id: "02_hydrological_loading"
+    title: "Hydrological loading vs. pore pressure (Roeloffs 1988, Fokker 2021)"
+    file: "analysis/02_hydrological_loading.ipynb"
+    runtime_minutes: 10
+    keywords: ["hydrology", "poroelastic", "loading", "pore pressure"]
+    output: "Competing load and pore-pressure dv/v contributions"
+
+  - id: "03_nonlinear_elasticity"
+    title: "Nonlinear elasticity and acoustoelastic beta (Murnaghan 1937)"
+    file: "analysis/03_nonlinear_elasticity.ipynb"
+    runtime_minutes: 6
+    keywords: ["nonlinear elasticity", "acoustoelastic", "beta"]
+    output: "Acoustoelastic beta across materials"
+
+  - id: "04_stress_anisotropy"
+    title: "Deviatoric stress and anisotropy (Tromp & Trampert 2018)"
+    file: "analysis/04_stress_anisotropy.ipynb"
+    runtime_minutes: 12
+    keywords: ["anisotropy", "deviatoric stress", "crack closure"]
+    output: "Stress-induced anisotropy fit"
+
+  - id: "05_rheological_models"
+    title: "Logarithmic healing and viscoelasticity (Snieder 2017)"
+    file: "analysis/05_rheological_models.ipynb"
+    runtime_minutes: 9
+    keywords: ["healing", "rheology", "post-seismic", "viscoelastic"]
+    output: "Post-seismic recovery curves"
+
+  - id: "06_sensitivity_validity"
+    title: "Parameter space and coupling-regime diagram"
+    file: "analysis/06_sensitivity_validity.ipynb"
+    runtime_minutes: 15
+    keywords: ["parameter space", "regime", "validity"]
+    output: "Coupling-tier validity map"
+
+  - id: "coupling_diagnostic_cases"
+    title: "Three diagnostic cases (Ridgecrest, drought-flood, Parkfield tidal)"
+    file: "analysis/coupling_diagnostic_cases.py"
+    runtime_minutes: 5
+    keywords: ["diagnostics", "case study", "tier 2", "tier 3"]
+    output: "case1/case2/case3 figures (synthetic data by default)"
+
+  - id: "coupling_tier_tests"
+    title: "Tier 1/2/3 coupling validation tests"
+    file: "analysis/coupling_tier_tests.py"
+    runtime_minutes: 5
+    keywords: ["tier 1", "tier 2", "tier 3", "validation"]
+    output: "tier1/tier2/tier3 + regime-diagram figures"

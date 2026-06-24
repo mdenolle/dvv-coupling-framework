@@ -1,0 +1,23 @@
+# Parkfield tidal coupling preset (Tiers 1+2)
+# Reproduces the Okubo et al. (2024) M2 tidal-amplitude analysis context.
+site:
+  name: "Parkfield (granite)"
+  Vs: 2500.0          # m/s, SAFOD (Jeppson & Tobin 2015)
+  rho: 2500.0         # kg/m^3
+  nu: 0.25            # drained Poisson ratio
+  mu_prime: 251.0     # manuscript Table 2
+  beta: -240.0        # manuscript Table 2
+  alpha_B: 0.7        # Biot coefficient (fractured rock)
+  B_skemp: 0.4        # Skempton B (partially drained granite)
+  perm: 1.0e-15       # m^2 (fault zone)
+  phi: 0.05           # porosity
+  depth: 800.0        # sensitivity depth, m
+  kappa_T: 1.0e-6     # thermal diffusivity, m^2/s
+  alpha_T: 8.0e-6     # thermal expansion, 1/K
+analysis:
+  frequency_hz: 3.0
+  rule: "third_wavelength"
+description: >
+  Tier 1+2 analysis of Parkfield tidal coupling: track the M2 tidal
+  amplitude of dv/v around the 2004 Parkfield earthquake.
+reference: "Okubo et al. (2024), JGR Solid Earth"

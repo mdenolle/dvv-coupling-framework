@@ -1,0 +1,22 @@
+# Cascadia marine-sediment preset (subduction margin)
+site:
+  name: "Cascadia (sediment)"
+  Vs: 500.0           # m/s (Han et al. 2017)
+  rho: 1900.0         # kg/m^3
+  nu: 0.40            # high Poisson ratio (soft sediment)
+  mu_prime: 618.0     # manuscript Table 2
+  beta: -3160.0       # manuscript Table 2
+  alpha_B: 0.95       # Biot coefficient (unconsolidated)
+  B_skemp: 0.75       # Skempton B (high-porosity, saturated)
+  perm: 1.0e-13       # m^2 (accretionary wedge)
+  phi: 0.40           # porosity
+  depth: 200.0        # sensitivity depth, m
+  kappa_T: 0.5e-6     # thermal diffusivity, m^2/s
+  alpha_T: 5.0e-6     # thermal expansion, 1/K
+analysis:
+  frequency_hz: 2.0
+  rule: "third_wavelength"
+description: >
+  Marine sediment column on the Cascadia margin: undrained-regime example
+  with strong poroelastic amplification of beta.
+reference: "Han et al. (2017)"

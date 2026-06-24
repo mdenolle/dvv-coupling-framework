@@ -1,0 +1,22 @@
+# Nepal Himalaya post-earthquake preset (Illien et al. 2022)
+site:
+  name: "Nepal (post-earthquake)"
+  Vs: 1500.0          # m/s (average shallow crust)
+  rho: 2400.0         # kg/m^3
+  nu: 0.28
+  mu_prime: 150.0     # moderate fractured rock
+  beta: -145.45454545454547   # = -150 * kappa / (2 mu)
+  alpha_B: 0.8
+  B_skemp: 0.5
+  perm: 1.0e-14       # m^2 (pre-earthquake)
+  phi: 0.10
+  depth: 300.0
+  kappa_T: 0.8e-6
+  alpha_T: 7.0e-6
+analysis:
+  frequency_hz: 3.0
+  rule: "third_wavelength"
+description: >
+  Post-Gorkha-earthquake recovery context for damage-permeability
+  feedback (Tier 2) in fractured Himalayan crust.
+reference: "Illien et al. (2022)"

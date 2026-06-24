@@ -1,3 +1,10 @@
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+
+# LaTeX build intermediates; keep generated submission sources/artifacts visible.
+paper/build/*
+!paper/build/
+!paper/build/*.md
+!paper/build/*.tex
+!paper/build/*.pdf
