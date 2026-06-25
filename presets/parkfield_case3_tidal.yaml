@@ -3,10 +3,12 @@
 site:
   name: "Parkfield (granite)"
   Vs: 2500.0          # m/s, SAFOD (Jeppson & Tobin 2015)
+  Vp: 4500.0          # m/s -> kappa_u = 29.8 GPa (seismic/undrained)
   rho: 2500.0         # kg/m^3
-  nu: 0.25            # drained Poisson ratio
-  mu_prime: 251.0     # manuscript Table 2
-  beta: -240.0        # manuscript Table 2
+  mu_prime: 251.0     # manuscript Table 2 (consistency-check output)
+  beta: -240.0        # directional; bridge-consistent with kappa_u
+  beta_source: "bridge"
+  regime: "undrained"
   alpha_B: 0.7        # Biot coefficient (fractured rock)
   B_skemp: 0.4        # Skempton B (partially drained granite)
   perm: 1.0e-15       # m^2 (fault zone)

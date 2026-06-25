@@ -2,10 +2,12 @@
 site:
   name: "Agricultural soil"
   Vs: 200.0           # m/s (near-surface soil)
+  Vp: 450.0           # m/s, low (air in pores) -> kappa_u = 0.239 GPa
   rho: 1600.0         # kg/m^3
-  nu: 0.35
   mu_prime: 2000.0    # very high for unconsolidated soil
-  beta: -2999.9999999999995   # = -2000 * kappa / (2 mu)
+  beta: -3730.0       # bridge value at kappa_u
+  beta_source: "bridge"
+  regime: "undrained"
   alpha_B: 0.99       # nearly 1 for soil
   B_skemp: 0.90
   perm: 1.0e-11       # m^2 (sandy soil)

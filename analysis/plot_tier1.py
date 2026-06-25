@@ -253,12 +253,13 @@ def fig_rt_comparison(df,
                    c=REGIME_COLORS.get(regime), s=15, alpha=0.5,
                    edgecolors="none", label=regime)
 
-    # Running median
+    # Moving average of R_T vs Pe (uniform_filter1d is a moving average,
+    # not a median — labelled accordingly).
     Pe_sorted = np.sort(Pe.values)
     from scipy.ndimage import uniform_filter1d
     idx = np.argsort(Pe.values)
     RT_smooth = uniform_filter1d(RT.values[idx], size=30)
-    ax.semilogx(Pe_sorted, RT_smooth, "k-", lw=2, label="Smoothed median")
+    ax.semilogx(Pe_sorted, RT_smooth, "k-", lw=2, label="Moving average")
 
     ax.axvline(0.1, color=REGIME_COLORS["drained"],    linestyle="--", alpha=0.7)
     ax.axvline(10,  color=REGIME_COLORS["undrained"],   linestyle="--", alpha=0.7)
@@ -299,11 +300,15 @@ def fig_transitional_diagnostic(df,
                    c=REGIME_COLORS.get(regime), s=15, alpha=0.6,
                    edgecolors="none", label=regime)
 
-    # Theoretical prediction
+    # Diagnostic prior curve. NOTE: this is the SAME functional form used to
+    # construct the coupling mismatch score, so data agreeing with it is
+    # CIRCULAR and is NOT an independent validation. Plotted only to show the
+    # prior that defines the score.
     Pe_theory = np.logspace(-3, 3, 200)
     log_Pe = np.log10(Pe_theory)
     R2_pred = 0.7 - 0.3 * np.exp(-(log_Pe**2) / 2.0)
-    ax.semilogx(Pe_theory, R2_pred, "k--", lw=1.5, label="Theory: R²_exp")
+    ax.semilogx(Pe_theory, R2_pred, "k--", lw=1.5,
+                label="Diagnostic prior (defines the score; not an independent validation)")
 
     ax.axvline(0.1, color=REGIME_COLORS["drained"],   linestyle=":", alpha=0.7)
     ax.axvline(10,  color=REGIME_COLORS["undrained"],  linestyle=":", alpha=0.7)

@@ -225,13 +225,20 @@ def step4_coupling_diagnostic(df):
 
     vd = variance_decomposition(df)
 
-    # Correlation of log|Pe - 1| with unexplained variance
+    # Correlation of log|Pe - 1| with unexplained variance.
+    # Convert both to numpy arrays and apply a single combined finite mask so the
+    # two pearsonr/spearmanr arguments stay aligned (previously a dropna'd Series
+    # was paired with a boolean-masked array, which could misalign / mismatch).
     from scipy.stats import pearsonr, spearmanr
-    log_Pe_dist = np.log10(df["Pe_annual"].clip(1e-4, 1e4)).abs()
+    log_Pe_dist = np.abs(np.log10(df["Pe_annual"].clip(1e-4, 1e4)).values)
     unexplained = (1 - df["best_r2"].clip(0, 1)).values
 
-    r_pearson,  p_pearson  = pearsonr(log_Pe_dist.dropna(), unexplained[~np.isnan(log_Pe_dist)])
-    r_spearman, p_spearman = spearmanr(log_Pe_dist.dropna(), unexplained[~np.isnan(log_Pe_dist)])
+    finite = np.isfinite(log_Pe_dist) & np.isfinite(unexplained)
+    log_Pe_dist_f = log_Pe_dist[finite]
+    unexplained_f = unexplained[finite]
+
+    r_pearson,  p_pearson  = pearsonr(log_Pe_dist_f, unexplained_f)
+    r_spearman, p_spearman = spearmanr(log_Pe_dist_f, unexplained_f)
 
     print(f"\n  Pearson  corr(|log Pe|, unexplained): r={r_pearson:.3f}, p={p_pearson:.3e}")
     print(f"  Spearman corr(|log Pe|, unexplained): r={r_spearman:.3f}, p={p_spearman:.3e}")

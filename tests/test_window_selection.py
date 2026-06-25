@@ -5,7 +5,7 @@ import pytest
 from codameter import (
     CodaWindow,
     WindowEstimate,
-    bayesian_window_average,
+    window_sensitivity_diagnostic,
     candidate_windows,
     characteristic_depth,
     cycles_score,
@@ -120,7 +120,7 @@ def test_score_lapse_profile_preserves_early_to_late_order():
     assert profile.ranked()[0].score >= profile.ranked()[-1].score
 
 
-def test_bayesian_window_average_decomposes_method_uncertainty():
+def test_window_sensitivity_diagnostic_decomposes_method_uncertainty():
     windows = rolling_lapse_windows(
         start_s=2,
         stop_s=14,
@@ -137,7 +137,7 @@ def test_bayesian_window_average_decomposes_method_uncertainty():
             "lapse_002": {"coherence": 0.9, "snr": 10.0},
         },
     )
-    posterior = bayesian_window_average(
+    posterior = window_sensitivity_diagnostic(
         profile,
         estimates={
             "lapse_000": WindowEstimate(mean=1.0e-4, sigma=1.0e-5),

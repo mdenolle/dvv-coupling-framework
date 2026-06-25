@@ -147,8 +147,44 @@ def poisson_ratio(Vp: ArrayLike, Vs: ArrayLike) -> ArrayLike:
 
 
 def bulk_modulus(Vp: ArrayLike, Vs: ArrayLike, rho: ArrayLike) -> ArrayLike:
-    """Undrained bulk modulus K [Pa] from seismic velocities."""
+    """Seismic-band (undrained) bulk modulus K_u [Pa] from velocities.
+
+    At seismic frequencies (~1 Hz) the pore fluid cannot drain within a wave
+    period, so the modulus inferred from V_P, V_S is the **undrained** bulk
+    modulus, ``K_u = rho (V_P^2 - 4/3 V_S^2)``. This is the value the bridge
+    relation should use when the loading regime is undrained (see
+    :func:`drained_bulk_modulus` for the drained counterpart and
+    :func:`bridge_beta`).
+    """
     return rho * (Vp**2 - 4.0 / 3.0 * Vs**2)
+
+
+def drained_bulk_modulus(
+    kappa_u: ArrayLike, alpha_B: ArrayLike, B: ArrayLike
+) -> ArrayLike:
+    """Drained bulk modulus kappa_d from the undrained (seismic) modulus.
+
+    Inverts the poroelastic relation ``kappa_u = kappa_d / (1 - alpha_B B)``
+    (Roeloffs 1988; manuscript §2.5), giving
+
+        kappa_d = kappa_u * (1 - alpha_B * B).
+
+    The drained modulus is smaller than the undrained one because, given time
+    to drain, the same volumetric strain induces less pressure.
+
+    Parameters
+    ----------
+    kappa_u : float or array [Pa]
+        Undrained / seismic-band bulk modulus (e.g. from :func:`bulk_modulus`).
+    alpha_B : float or array
+        Biot coefficient, in [0, 1).
+    B : float or array
+        Skempton's B coefficient, in [0, 1).
+    """
+    coupling = np.asarray(alpha_B) * np.asarray(B)
+    if np.any(coupling >= 1.0):
+        raise ValueError("alpha_B * B must be < 1 for a finite drained modulus")
+    return np.asarray(kappa_u, dtype=float) * (1.0 - coupling)
 
 
 def shear_modulus(Vs: ArrayLike, rho: ArrayLike) -> ArrayLike:
@@ -157,27 +193,35 @@ def shear_modulus(Vs: ArrayLike, rho: ArrayLike) -> ArrayLike:
 
 
 def skempton_B_from_velocities(Vp_dry, Vs_dry, rho_dry,
-                                Vp_sat, Vs_sat, rho_sat):
+                               Vp_sat, Vs_sat, rho_sat,
+                               K_grain):
     """
     Estimate Skempton's B coefficient from dry and saturated velocities
     using Gassmann's relations.
 
-    B = ΔP / Δσ_mean|undrained = (K_sat - K_dry) / (K_sat + ΔK_f)
-
     Simplified form (after Roeloffs 1988):
         B ≈ (K_u - K_d) / (α_B · K_u)
 
-    where α_B = 1 - K_d/K_grain (Biot coefficient).
+    where the **Biot coefficient uses the mineral (grain) modulus**,
+    ``α_B = 1 - K_dry / K_grain`` — *not* K_sat. K_grain is a material
+    property (e.g. ~36 GPa quartz, ~75 GPa calcite) and must be supplied.
 
     For a quick estimate without dry/sat pairs, use skempton_B_empirical().
+
+    Parameters
+    ----------
+    Vp_dry, Vs_dry, rho_dry, Vp_sat, Vs_sat, rho_sat
+        Dry and saturated velocities and densities.
+    K_grain : float [Pa]
+        Mineral (solid-grain) bulk modulus.
     """
+    if K_grain <= 0:
+        raise ValueError("K_grain (mineral bulk modulus) must be positive")
     K_dry = bulk_modulus(Vp_dry, Vs_dry, rho_dry)
     K_sat = bulk_modulus(Vp_sat, Vs_sat, rho_sat)
-    mu_dry = shear_modulus(Vs_dry, rho_dry)
     # Gassmann: shear modulus unchanged → mu_sat ≈ mu_dry
-    # Biot coefficient: α_B ≈ 1 - K_dry/K_grain
-    # Assuming K_grain >> K_dry for unconsolidated sediment → α_B ≈ 1
-    alpha_B = 1.0 - K_dry / K_sat   # approximate
+    # Biot coefficient uses the GRAIN modulus, not K_sat.
+    alpha_B = np.clip(1.0 - K_dry / K_grain, 1e-6, 1.0)
     B = (K_sat - K_dry) / (alpha_B * K_sat)
     return np.clip(B, 0, 1), alpha_B
 
@@ -288,6 +332,48 @@ def beta_ratio_undrained_to_drained(alpha_B: ArrayLike, B: ArrayLike) -> ArrayLi
     Range: ~1.3 (consolidated rock) to ~5 (soft sediment).
     """
     return 1.0 / (1.0 - alpha_B * B)
+
+
+def bridge_beta(mu_prime: ArrayLike, kappa: ArrayLike, mu: ArrayLike) -> ArrayLike:
+    """Strain-domain acoustoelastic parameter from the bridge relation.
+
+    Implements the paper's central reconciliation of the stress and strain
+    formulations (manuscript Eq. 7):
+
+        β = -μ' κ / (2μ)
+
+    where ``mu_prime`` = dμ/dP (dimensionless, O(1–10)), ``kappa`` is the bulk
+    modulus **at the loading-regime timescale** (drained κ_d or undrained κ_u;
+    see :func:`drained_bulk_modulus`), and ``mu`` is the shear modulus. The
+    returned β is the dimensionless strain-domain coefficient used throughout
+    the manuscript (δv/v = β ε_kk), distinct from the stress-domain
+    :func:`beta_drained` which returns -μ'/(2μ) in [1/Pa].
+
+    Notes
+    -----
+    Eq. 7 was derived under isotropic loading. Applying it to a *directional*
+    β (β_axial, β_radial under deviatoric stress) is an order-of-magnitude
+    approximation only.
+    """
+    return -np.asarray(mu_prime, dtype=float) * np.asarray(kappa, dtype=float) / (
+        2.0 * np.asarray(mu, dtype=float)
+    )
+
+
+def mu_prime_from_bridge(
+    beta: ArrayLike, kappa: ArrayLike, mu: ArrayLike
+) -> ArrayLike:
+    """Invert the bridge relation for μ' given a (strain-domain) β.
+
+        μ' = -2μ β / κ
+
+    Use this as a *consistency check* when β is known independently (e.g. the
+    borehole-calibrated β at Cascadia): it returns the μ' implied by the
+    measured β and the regime-appropriate κ.
+    """
+    return -2.0 * np.asarray(mu, dtype=float) * np.asarray(beta, dtype=float) / (
+        np.asarray(kappa, dtype=float)
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────

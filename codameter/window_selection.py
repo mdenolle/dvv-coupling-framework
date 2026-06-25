@@ -150,8 +150,16 @@ class WindowEstimate:
 
 
 @dataclass(frozen=True)
-class BayesianWindowAverage:
-    """Bayesian model average over window-conditioned estimates."""
+class WindowSensitivityDiagnostic:
+    """Window-sensitivity diagnostic over window-conditioned estimates.
+
+    This is a *diagnostic* — it quantifies how much a scientific target moves
+    when the coda window changes — NOT a turnkey Bayesian error bar. The
+    score-based weights are heuristic (not marginal likelihoods) and the
+    between-window term double-counts when overlapping windows share coda
+    samples (manuscript §7.4). Report ``epistemic_sigma`` as method-sensitivity,
+    not as a publishable posterior uncertainty.
+    """
 
     mean: float
     total_sigma: float
@@ -368,24 +376,26 @@ def _softmax(logits: np.ndarray) -> np.ndarray:
     return values / values.sum()
 
 
-def bayesian_window_average(
+def window_sensitivity_diagnostic(
     scores: Sequence[WindowScore] | LapseProfile,
     estimates: Mapping[str, WindowEstimate | tuple[float, float]],
     *,
     score_weight_scale: float = 4.0,
     min_score: float | None = None,
-) -> BayesianWindowAverage:
-    """Bayesian model average across candidate coda windows.
+) -> WindowSensitivityDiagnostic:
+    """Score-weighted model average across candidate coda windows (diagnostic).
 
     Each coda window is treated as a competing measurement model. Its objective
-    score supplies a prior model weight, while its window-conditioned estimate
-    supplies a normal posterior for the scientific quantity of interest. The
+    score supplies a heuristic weight, while its window-conditioned estimate
+    supplies a normal distribution for the scientific quantity of interest. The
     returned variance is decomposed by the law of total variance:
 
     total = expected within-window variance + between-window method variance.
 
-    The between-window term is the epistemic uncertainty introduced by the
-    processing method itself.
+    The between-window term measures how much the result depends on the window
+    choice. This is a sensitivity diagnostic, NOT a calibrated posterior: the
+    weights are not model evidence and overlapping windows are correlated
+    (manuscript §7.4). See :class:`WindowSensitivityDiagnostic`.
     """
     if score_weight_scale <= 0:
         raise ValueError("score_weight_scale must be positive")
@@ -424,7 +434,7 @@ def bayesian_window_average(
         for (item, _), weight in zip(selected, weights_array, strict=True)
     }
 
-    return BayesianWindowAverage(
+    return WindowSensitivityDiagnostic(
         mean=mean,
         total_sigma=total_var**0.5,
         aleatoric_sigma=aleatoric_var**0.5,

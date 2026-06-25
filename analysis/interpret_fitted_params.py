@@ -374,6 +374,9 @@ def interpret_all_sites(df, freq_hz=3.0,
     def matches(best, predicted):
         # 'drained' prediction matches 'drained' or 'fc' model win
         # 'undrained' prediction matches 'elastic' or 'ssw' model win
+        # MODELING ASSUMPTION: the 'elastic' model is treated as the 'undrained'
+        # end-member (elastic ≈ undrained). This is a modeling choice, not an
+        # established fact, and it is also baked into coupling_mismatch_score below.
         mapping = {
             "drained":     {"drained", "fc"},
             "undrained":   {"elastic", "ssw"},
@@ -386,6 +389,8 @@ def interpret_all_sites(df, freq_hz=3.0,
     ]
 
     # ── Mismatch score (coupling diagnostic) ──────────────────────────────────
+    # MODELING ASSUMPTION: r2_elastic is used as the 'undrained' end-member R²
+    # (elastic ≈ undrained). This is a modeling choice, not an established fact.
     r2_d = df.get("r2_drained", pd.Series(0.0, index=df.index)).fillna(0).values
     r2_e = df.get("r2_elastic", pd.Series(0.0, index=df.index)).fillna(0).values
     df["mismatch_score"] = coupling_mismatch_score(r2_d, r2_e, df["Pe_annual"].values)
@@ -415,19 +420,26 @@ def interpret_all_sites(df, freq_hz=3.0,
         df["thermo_dominance"] = np.nan
 
     # ── SSW decay rate → equivalent c interpretation ──────────────────────────
-    # SSW decay rate a [day⁻¹] → groundwater memory τ = 1/a days
+    # UNIT ASSUMPTIONS: ssw_decay_rate a is in day⁻¹; cdm_k_days k is in days
+    # (per the C&D fitted-column definitions in CD_COLUMN_MAP). Convert a rate in
+    # day⁻¹ to s⁻¹ by dividing by 86400 (a_per_sec = a / 86400) so that
+    # c = L² · a_per_sec comes out in genuine m²/s.
     if "ssw_decay_rate" in df.columns:
-        a = df["ssw_decay_rate"].values
-        df["ssw_memory_days"] = np.where(a > 0, 1.0 / (a * 86400), np.nan)
-        # Effective c from SSW: c_eff ≈ L² × a (matching SSW to drainage frequency)
-        df["ssw_c_equivalent"] = L**2 * a / 86400   # m²/s
+        a = df["ssw_decay_rate"].values                 # [day⁻¹]
+        # Memory τ = 1/a is already in days (do NOT multiply by 86400).
+        df["ssw_memory_days"] = np.where(a > 0, 1.0 / a, np.nan)   # [days]
+        # Effective c from SSW: c_eff ≈ L² × a_per_sec, a_per_sec = a / 86400.
+        a_per_sec = a / 86400.0                          # [s⁻¹]
+        df["ssw_c_equivalent"] = L**2 * a_per_sec        # [m²/s]
 
     # ── CDMk memory window interpretation ────────────────────────────────────
     if "cdm_k_days" in df.columns:
-        k = df["cdm_k_days"].values
+        k = df["cdm_k_days"].values                      # [days]
         # CDMk k maps loosely to a linear trend timescale → equivalent drainage
-        # c_equiv from CDMk: c ~ L²/tau where tau = k/2 (half-memory)
-        df["cdm_c_equivalent"] = 2 * L**2 / (np.maximum(k, 1) * 86400)
+        # c_equiv from CDMk: c ~ L²/τ where τ = k/2 (half-memory).
+        # Convert τ [days] to seconds (× 86400) so c is in m²/s.
+        tau_sec = np.maximum(k, 1) / 2.0 * 86400.0       # [s]
+        df["cdm_c_equivalent"] = L**2 / tau_sec          # [m²/s]
 
     return df
 

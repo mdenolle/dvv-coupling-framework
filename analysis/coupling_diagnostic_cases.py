@@ -24,7 +24,7 @@ Each case includes:
 When parquet files are available, replace the synthetic data generators with
 the real data loading functions.
 
-Authors: M. A. Denolle & Claude (Anthropic AI)
+Author: M. A. Denolle (AI tools used as a research assistant under the author's direction)
 Date: 2026-04-01
 """
 
@@ -37,7 +37,14 @@ from scipy.signal import butter, filtfilt
 from datetime import datetime, timedelta
 import os
 import warnings
-warnings.filterwarnings('ignore')
+
+# NOTE: a global warnings.filterwarnings('ignore') was removed here so that
+# aliasing / rank-deficiency / numerical warnings are surfaced rather than
+# silently hidden (these are scientifically meaningful for the diagnostics).
+
+# Fixed seed for reproducible synthetic figures (np.random is used in the
+# synthetic data generators below).
+np.random.seed(20260401)
 
 # Output directory for figures (repo-relative; override with $DVV_FIGDIR).
 FIGDIR = os.environ.get(
@@ -174,9 +181,22 @@ def generate_parkfield_synthetic(years=(2001, 2023)):
     """
     Generate synthetic Parkfield δv/v matching Okubo et al. (2024) Fig. 9.
     
-    Key features: weak seasonality (~0.02%), coseismic drops at San Simeon 
-    (2003-12-22) and Parkfield (2004-09-28), logarithmic healing, secular 
+    Key features: weak seasonality (~0.02%), coseismic drops at San Simeon
+    (2003-12-22) and Parkfield (2004-09-28), logarithmic healing, secular
     trend of +0.0048%/yr, plus a tidal signal.
+
+    SYNTHETIC ROUND-TRIP / ESTIMATOR-VALIDATION NOTE
+    ------------------------------------------------
+    This generator INJECTS a known M2 tidal step (amplitude scale 240 -> 180,
+    i.e. a ~25% reduction at the Parkfield earthquake) so that the analysis can
+    test whether the estimator recovers the injected parameters. It is NOT a
+    discovery from real data.
+
+    ALIASING WARNING: the series is built at 1-day sampling, but the injected
+    M2 signal has period 0.5175 days, which is BELOW the Nyquist period (2 days)
+    for daily sampling. Daily sampling therefore ALIASES M2. This demo is
+    illustrative of the ESTIMATOR machinery only; recovering a real M2 tidal
+    response requires sub-daily data.
     """
     dates, dec_years = date_range(years[0], years[1])
     t_days = np.arange(len(dates), dtype=float)
@@ -213,6 +233,9 @@ def generate_parkfield_synthetic(years=(2001, 2023)):
     # At Parkfield, tidal strain ~50 nanostrain, β ~ -240
     # δv/v_tidal ~ 240 * 50e-9 = 1.2e-5 = 0.0012%
     # This is at the resolution limit but detectable in stacking
+    # ALIASING WARNING: M2 period (0.5175 d) is below the 2-day Nyquist period
+    # of this 1-day-sampled series, so this injected M2 is aliased. Kept only to
+    # exercise the estimator; real M2 recovery requires sub-daily sampling.
     tidal_period_days = 0.5175  # M2 period in days
     
     # Pre-earthquake tidal β
@@ -272,8 +295,16 @@ def case1_split_window_regression(data, window_years=2.0, config=None, dry_run=F
     coefficients before and after the Ridgecrest earthquake.
     
     Method: Fit δv/v = a1·T + a2·GWL + a0 in sliding or split windows.
-    If a2 changes after the earthquake while a1 remains stable, this 
+    If a2 changes after the earthquake while a1 remains stable, this
     diagnoses earthquake-modified hydrological sensitivity.
+
+    SYNTHETIC ROUND-TRIP / ESTIMATOR-VALIDATION NOTE
+    ------------------------------------------------
+    When run on ``generate_california_synthetic`` output this is an
+    ESTIMATOR-VALIDATION test: the synthetic data INJECT known coefficients
+    (a2_post = -0.0028 vs a2_pre = -0.0015), and this function simply checks
+    that the split-window regression RECOVERS the injected step. It is NOT a
+    discovery of an earthquake-modified coefficient from real data.
 
     Pass ``dry_run=True`` to print the analysis plan without computing.
     """
@@ -374,7 +405,8 @@ def plot_case1(data, results):
     ax.axvline(x=eq_year, color='red', ls='--', linewidth=1.5, 
                label=f'Ridgecrest M7.1')
     ax.set_ylabel('δv/v (%)', fontsize=11)
-    ax.set_title(f"Case 1: Split-window regression — {data['station']}", fontsize=13)
+    ax.set_title(f"Case 1: Split-window regression (SYNTHETIC round-trip / "
+                 f"estimator validation) — {data['station']}", fontsize=13)
     ax.legend(fontsize=9)
     ax.grid(True, alpha=0.3)
     
@@ -406,7 +438,8 @@ def plot_case1(data, results):
     
     # Annotate the coupling diagnostic
     a2_change = (results['a2_post_mean'] - results['a2_pre_mean']) / abs(results['a2_pre_mean']) * 100
-    ax.annotate(f'Tier 2 diagnostic:\na₂ changed by {a2_change:+.0f}%\npost-earthquake',
+    ax.annotate(f'Tier 2 estimator-validation (synthetic):\nrecovered injected a₂ '
+                f'change of {a2_change:+.0f}%\npost-earthquake (not a real-data discovery)',
                 xy=(eq_year + 1.5, results['a2_post_mean']*1000),
                 fontsize=10, fontweight='bold',
                 bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
@@ -613,6 +646,19 @@ def case3_tidal_beta_evolution(data, stack_days=180, step_days=30, config=None, 
     Method: Harmonic regression at the M2 period (12.42 hr = 0.5175 days)
     in sliding windows. Track amplitude over time.
 
+    SYNTHETIC ROUND-TRIP / ESTIMATOR-VALIDATION NOTE
+    ------------------------------------------------
+    When run on ``generate_parkfield_synthetic`` output this is an
+    ESTIMATOR-VALIDATION test: the synthetic data INJECT a known M2 amplitude
+    step (scale 240 -> 180 at the Parkfield earthquake), and this function
+    checks that the harmonic regression RECOVERS that injected step. It is NOT a
+    discovery of a tidal-β change from real data.
+
+    ALIASING WARNING: the synthetic series is 1-day sampled while M2 has period
+    0.5175 d (below the 2-day Nyquist period), so the injected M2 is aliased.
+    This demo is illustrative of the ESTIMATOR only; real M2 recovery requires
+    sub-daily data.
+
     Pass ``dry_run=True`` to print the analysis plan without computing.
     """
     if dry_run:
@@ -714,7 +760,9 @@ def plot_case3(data, results):
     ax.axvline(x=ss_year, color='orange', ls='--', alpha=0.7, label='San Simeon')
     ax.axvline(x=pf_year, color='red', ls='--', alpha=0.7, label='Parkfield')
     ax.set_ylabel('δv/v (%)', fontsize=11)
-    ax.set_title('Case 3: Tidal β evolution at Parkfield (Tiers 1+2)', fontsize=13)
+    ax.set_title('Case 3: Tidal β evolution at Parkfield (Tiers 1+2)\n'
+                 'SYNTHETIC round-trip / estimator validation — recovers injected '
+                 'M2 step; daily sampling aliases M2 (illustrative only)', fontsize=12)
     ax.legend(fontsize=9)
     ax.grid(True, alpha=0.3)
     
@@ -748,7 +796,8 @@ def plot_case3(data, results):
     if np.any(pre) and np.any(post_early):
         change_pct = (np.mean(results['M2_amp'][post_early]) - np.mean(results['M2_amp'][pre])) / \
                      np.mean(results['M2_amp'][pre]) * 100
-        ax.annotate(f'Tier 1+2 diagnostic:\nTidal β changed by {change_pct:+.0f}%\npost-earthquake',
+        ax.annotate(f'Tier 1+2 estimator-validation (synthetic):\nrecovered injected '
+                    f'tidal-β change of {change_pct:+.0f}%\npost-earthquake (not a real-data discovery)',
                    xy=(pf_year + 2, np.mean(results['M2_amp'][post_early])*1e4),
                    fontsize=10, fontweight='bold',
                    bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
@@ -851,6 +900,8 @@ if __name__ == "__main__":
     # =========================================================================
     print("=" * 70)
     print("CASE 1: Ridgecrest split-window regression (Tier 2)")
+    print("       [SYNTHETIC round-trip / estimator validation — recovers")
+    print("        injected coefficients, not a real-data discovery]")
     print("=" * 70)
     
     # Generate synthetic data (replace with parquet loading when available)
@@ -898,6 +949,9 @@ if __name__ == "__main__":
     # =========================================================================
     print("=" * 70)
     print("CASE 3: Parkfield tidal β evolution (Tiers 1+2)")
+    print("       [SYNTHETIC round-trip / estimator validation — recovers")
+    print("        injected M2 step; daily sampling aliases M2 (illustrative")
+    print("        only; sub-daily data required for real M2 recovery)]")
     print("=" * 70)
     
     data3 = generate_parkfield_synthetic(years=(2001, 2023))

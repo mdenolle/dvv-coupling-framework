@@ -7,12 +7,12 @@ method dependence in ambient-noise velocity-change studies.
 
 from .window_selection import (
     CodaWindow,
-    BayesianWindowAverage,
+    WindowSensitivityDiagnostic,
     LapseProfile,
     WindowEstimate,
     WindowScore,
     apparent_velocity,
-    bayesian_window_average,
+    window_sensitivity_diagnostic,
     characteristic_depth,
     candidate_windows,
     cycles_score,
@@ -30,12 +30,12 @@ __version__ = "0.1.0"
 
 __all__ = [
     "CodaWindow",
-    "BayesianWindowAverage",
+    "WindowSensitivityDiagnostic",
     "LapseProfile",
     "WindowEstimate",
     "WindowScore",
     "apparent_velocity",
-    "bayesian_window_average",
+    "window_sensitivity_diagnostic",
     "characteristic_depth",
     "candidate_windows",
     "cycles_score",

@@ -108,6 +108,8 @@ Using the bridge relation $\beta = -\mu'\kappa/(2\mu)$ and the velocity profile:
 
 This $\mu' \approx 250$ is high but plausible for fractured granite at relatively shallow confining pressure (~20 MPa at 0.8 km). Fokker et al. (2021) reported $\mu' \sim 50$–$150$ for consolidated sediments at comparable depths in Groningen; the higher value here reflects the fractured, crack-rich SAFOD granite.
 
+> **Grounding/regime note (2026-06-25).** The $\kappa = 29.8$ GPa above is the *seismic-band* (undrained) modulus computed directly from $V_P, V_S$ (it implies $\nu \approx 0.28$; the prior config value $\nu = 0.25$ is superseded — moduli are now derived from velocities, not an assumed $\nu$). For the secular interseismic signal the Péclet number is $Pe<1$ (drained–transitional) for plausible fractured-granite diffusivities, but because granite has small $\alpha_B B \approx 0.28$ the drained modulus $\kappa_d = \kappa_u(1-\alpha_B B) \approx 21.5$ GPa differs only modestly, bounding $\mu' \approx 251$ (using $\kappa_u$) to $\approx 350$ (using $\kappa_d$). Since $\beta_{\text{axial}}$ is directional, Eq. 7 is an **order-of-magnitude** relation here regardless; we report the $\kappa_u$ endpoint to match the directly-measured seismic modulus. See `provenance_tables.md`.
+
 **The contractional stress change per year:**
 
 Using $\delta V_S/V_S = \mu' \sigma_{\text{deviatoric}} / (4\mu)$ (the deviatoric term from Eq. 4):

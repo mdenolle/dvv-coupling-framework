@@ -2,10 +2,12 @@
 site:
   name: "Nepal (post-earthquake)"
   Vs: 1500.0          # m/s (average shallow crust)
+  Vp: 2600.0          # m/s, Vp/Vs ~ 1.73 -> kappa_u = 9.02 GPa
   rho: 2400.0         # kg/m^3
-  nu: 0.28
   mu_prime: 150.0     # moderate fractured rock
-  beta: -145.45454545454547   # = -150 * kappa / (2 mu)
+  beta: -125.3        # bridge value at kappa_u
+  beta_source: "bridge"
+  regime: "undrained"
   alpha_B: 0.8
   B_skemp: 0.5
   perm: 1.0e-14       # m^2 (pre-earthquake)

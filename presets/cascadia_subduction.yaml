@@ -2,10 +2,12 @@
 site:
   name: "Cascadia (sediment)"
   Vs: 500.0           # m/s (Han et al. 2017)
+  Vp: 1700.0          # m/s -> kappa_u = 4.86 GPa (Pe~2.5 justifies undrained)
   rho: 1900.0         # kg/m^3
-  nu: 0.40            # high Poisson ratio (soft sediment)
-  mu_prime: 618.0     # manuscript Table 2
-  beta: -3160.0       # manuscript Table 2
+  mu_prime: 618.0     # consistency-check output: -2mu*beta/kappa_u
+  beta: -3160.0       # PUBLISHED: borehole-calibrated (Kidiwela 2026)
+  beta_source: "published"
+  regime: "undrained"
   alpha_B: 0.95       # Biot coefficient (unconsolidated)
   B_skemp: 0.75       # Skempton B (high-porosity, saturated)
   perm: 1.0e-13       # m^2 (accretionary wedge)

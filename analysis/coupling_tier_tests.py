@@ -22,7 +22,7 @@ Scenarios are designed to be consistent with published observations at:
 
 Output: Figures saved to /home/claude/figures/ and summary metrics printed.
 
-Authors: M. A. Denolle & Claude (Anthropic AI)
+Author: M. A. Denolle (AI tools used as a research assistant under the author's direction)
 Date: 2026-04-01
 """
 
@@ -36,8 +36,17 @@ import os
 
 try:  # package import
     from .config import PARKFIELD, CASCADIA, NEPAL, AGRICULTURAL
+    from .poroelastic_framework import beta_eff, drainage_frequency
 except ImportError:  # flat import (run from within analysis/)
     from config import PARKFIELD, CASCADIA, NEPAL, AGRICULTURAL
+    from poroelastic_framework import beta_eff, drainage_frequency
+
+# Reproducible figures.
+np.random.seed(20260401)
+
+# Poroelastic constants for drainage-frequency estimates.
+_ETA_WATER = 1e-3  # Pa s
+_SS_STORAGE = 1e-5  # 1/m specific storage
 
 # Output directory for figures (repo-relative; override with $DVV_FIGDIR).
 FIGDIR = os.environ.get(
@@ -137,73 +146,40 @@ def tier1_drained_undrained_transition():
     ax.set_ylim(1e-2, 1e8)
     ax.grid(True, alpha=0.3)
     
-    # Panel (c): δv/v error from ignoring coupling
+    # Panel (c): EMERGENT coupling -- beta_eff(omega) sweeps from the drained
+    # to the undrained limit across each site's data-driven drainage frequency
+    # omega_drain = c/L^2. This is a genuine frequency-dependent acoustoelastic
+    # coupling, NOT a hand-set contrast: beta_d and beta_u are both bridge
+    # values (-mu' kappa_{d,u} / 2mu), and the transition location is set by the
+    # site's permeability and sensitivity depth.
     ax = axes[2]
-    # Scenario: 1 kPa pore pressure change at each site
-    delta_P = 1000.0  # Pa
-    
-    site_names = []
-    errors_pct = []
-    dvv_drained_list = []
-    dvv_undrained_list = []
-    
+    periods_days = np.logspace(-1.5, 4.5, 400)        # ~hours to ~decades
+    omega = 2 * np.pi / (periods_days * 86400.0)      # rad/s
+
     for site in sites:
-        # Drained: β uses drained κ
-        dvv_drained = site.beta * (-delta_P / site.kappa) * 1e2  # in %
-        
-        # Undrained: β uses undrained κ
-        aB_B_val = site.alpha_B * site.B_skemp
-        kappa_u = site.kappa / (1 - aB_B_val)
-        beta_u = -site.mu_prime * kappa_u / (2 * site.mu)
-        # But in undrained, the pore pressure change itself is modified:
-        # Δu = B·Δσ_kk/3 (Skempton relation)
-        # For the same external loading, the pore pressure is larger
-        # The effective stress change is: Δσ_eff = Δσ - α_B·Δu
-        # For unit external load: Δσ_eff = 1 - α_B·B·1 = (1 - α_B·B)
-        # So δv/v_undrained = β_drained × ε_kk (same strain produces same δv/v)
-        # The difference is in how pore pressure couples to stress
-        dvv_undrained = beta_u * (-delta_P / kappa_u) * 1e2
-        
-        # Actually, the key difference is when we have a stress perturbation
-        # (e.g., tidal load) applied rapidly: in undrained, pore pressure
-        # absorbs part of the load, reducing effective stress change
-        # In drained, all load goes to effective stress
-        
-        # For a surface load T33 in Fokker formulation
-        # using a positive-compression convention:
-        # Drained: δVs/Vs = (-μ'/2μ)·0 + (μ'+1)/(12μ)·T33 [pore pressure = 0]
-        T33 = 1000.0  # Pa, compressive
-        dvv_drained_fokker = (site.mu_prime + 1) / (12 * site.mu) * T33
-        
-        # Undrained: δVs/Vs = (-μ'/2μ)·B(1+ν_u)/(3(1-ν_u))·T33 + ...
-        nu_u = 0.5 * (site.nu + site.alpha_B * site.B_skemp * (1 - 2*site.nu) / 
-                       (3 * (1 - site.alpha_B * site.B_skemp * (1 - 2*site.nu)/(3*(1-2*site.nu)))))
-        # Simplified: use Fokker Eq. 9
-        u0_undrained = site.B_skemp * (1 + nu_u) / (3 * (1 - nu_u)) * T33
-        dvv_undrained_fokker = (-site.mu_prime / (2*site.mu)) * u0_undrained + \
-                               (site.mu_prime + 1) / (12 * site.mu) * T33
-        
-        error = np.abs(dvv_undrained_fokker - dvv_drained_fokker) / np.abs(dvv_drained_fokker) * 100
-        
-        site_names.append(site.name.split('(')[0].strip())
-        errors_pct.append(min(error, 500))
-        dvv_drained_list.append(dvv_drained_fokker * 1e4)
-        dvv_undrained_list.append(dvv_undrained_fokker * 1e4)
-    
-    x = np.arange(len(site_names))
-    width = 0.35
-    bars1 = ax.bar(x - width/2, [abs(d) for d in dvv_drained_list], width, 
-                    label='Drained', color='steelblue', alpha=0.8)
-    bars2 = ax.bar(x + width/2, [abs(d) for d in dvv_undrained_list], width, 
-                    label='Undrained', color='darkorange', alpha=0.8)
-    
-    ax.set_xlabel('Site', fontsize=12)
-    ax.set_ylabel(r'$|\delta v/v|$ (×10⁻⁴ per kPa load)', fontsize=12)
-    ax.set_title('(c) Drained vs undrained δv/v', fontsize=13)
-    ax.set_xticks(x)
-    ax.set_xticklabels(site_names, fontsize=9, rotation=15)
-    ax.legend(fontsize=10)
-    ax.grid(True, alpha=0.3, axis='y')
+        L = site.depth
+        c = site.perm / (_SS_STORAGE * _ETA_WATER)    # hydraulic diffusivity
+        omega_drain = float(drainage_frequency(c, L))
+        # Drained-limit bridge beta (strain-domain, dimensionless).
+        beta_d = -site.mu_prime * site.kappa_d / (2 * site.mu)
+        beta_curve, _ = beta_eff(
+            beta_d, site.alpha_B, site.B_skemp, omega, omega_drain
+        )
+        ratio = np.abs(beta_curve) / np.abs(beta_d)
+        line, = ax.plot(periods_days, ratio, linewidth=2,
+                        label=site.name.split('(')[0].strip())
+        T_drain_days = 2 * np.pi / omega_drain / 86400.0
+        ax.axvline(T_drain_days, color=line.get_color(), ls=':', alpha=0.5)
+
+    for T_force, name in [(0.5, 'tidal'), (365.25, 'annual'), (3652.5, 'decadal')]:
+        ax.axvline(T_force, color='gray', ls='--', alpha=0.3)
+
+    ax.set_xscale('log')
+    ax.set_xlabel('Forcing period (days)', fontsize=12)
+    ax.set_ylabel(r'$|\beta_{\rm eff}(\omega)| / |\beta_{\rm drained}|$', fontsize=12)
+    ax.set_title(r'(c) Frequency-dependent $\beta_{\rm eff}$ (emergent coupling)', fontsize=13)
+    ax.legend(fontsize=9, loc='center left')
+    ax.grid(True, alpha=0.3)
     
     plt.tight_layout()
     plt.savefig(os.path.join(FIGDIR, 'tier1_poroelastic_coupling.png'), dpi=150, bbox_inches='tight')
@@ -273,29 +249,23 @@ def tier2_damage_permeability():
     rho_w = 1000.0
     g = 9.81
     
+    # Pore pressure as a single, dimensionally-consistent exponential-memory
+    # convolution of surface loading. The memory time tau_mem = z^2/c(t) IS the
+    # damage-permeability coupling: when the earthquake raises c(t) (k up), the
+    # memory shortens, so the seasonal pore-pressure (and hence dv/v) transfer
+    # function changes. Replaces an earlier two-branch hack with an
+    # undocumented *365 factor and a discontinuity at i=500.
     for i in range(1, len(t_days)):
-        # Accumulate pore pressure from each day's precipitation
-        dt_back = t_days[i] - t_days[:i]
-        dt_back_sec = dt_back * 86400.0
-        valid = dt_back_sec > 0
-        
-        if i <= 500:  # Use full convolution for first 500 days
-            c_eff = c_t[:i][valid]
-            arg = z_sens / np.sqrt(4 * c_eff * dt_back_sec[valid] + 1e-10)
-            kernel = erfc(arg)
-            precip_load = precip_mm[:i][valid] * 1e-3 * rho_w * g  # Convert mm to Pa
-            pore_pressure[i] = np.sum(precip_load * kernel) / max(1, np.sum(valid))
-        else:
-            # Approximate: use running average of recent c
-            c_avg = np.mean(c_t[max(0,i-365):i])
-            dt_effective = 90 * 86400  # Use 90-day effective memory
-            arg = z_sens / np.sqrt(4 * c_avg * dt_effective)
-            # Simple exponential decay model
-            alpha_decay = np.exp(-dt / (c_avg * 86400 / z_sens**2 * 365))
-            pore_pressure[i] = alpha_decay * pore_pressure[i-1] + \
-                               (1-alpha_decay) * precip_mm[i] * 1e-3 * rho_w * g * erfc(arg)
-        
-        loading[i] = precip_mm[i] * 1e-3 * rho_w * g  # Surface loading (Pa)
+        load_i = precip_mm[i] * 1e-3 * rho_w * g          # surface load [Pa]
+        tau_mem_days = z_sens**2 / c_t[i] / 86400.0        # diffusive memory [days]
+        alpha_decay = np.exp(-dt / tau_mem_days)           # AR(1) memory kernel
+        # Steady-state fraction of load that reaches z (erfc attenuation).
+        arg = z_sens / np.sqrt(4 * c_t[i] * tau_mem_days * 86400.0)
+        pore_pressure[i] = (
+            alpha_decay * pore_pressure[i - 1]
+            + (1.0 - alpha_decay) * load_i * erfc(arg)
+        )
+        loading[i] = load_i
     
     # Compute δv/v using Fokker formulation
     site = nepal
@@ -303,9 +273,14 @@ def tier2_damage_permeability():
     dvv_from_load = (site.mu_prime + 1) / (12 * site.mu) * (-loading)
     dvv_total = dvv_from_pore + dvv_from_load
     
-    # Add co-seismic drop and healing
+    # Add co-seismic drop and healing. NOTE: these two terms are IMPOSED
+    # observed phenomenology (Snieder-style step + log healing), not emergent
+    # from the coupling. The emergent coupling here is the change in the
+    # SEASONAL transfer function caused by c(t) (computed above); panel (d)
+    # isolates that by measuring seasonal amplitude of `dvv_total` (pre-EQ
+    # drop/healing), so the diagnostic is not contaminated by the imposed step.
     coseismic_drop = np.zeros_like(t_days)
-    coseismic_drop[post_eq_mask] = -0.005  # -0.5% co-seismic drop
+    coseismic_drop[post_eq_mask] = -0.005  # -0.5% co-seismic drop (imposed)
     
     tau_min, tau_max = 1.0, 3650.0  # Healing timescales (days)
     healing = np.zeros_like(t_days)
@@ -859,15 +834,16 @@ def print_parameter_summary():
     
     rows = [
         ("Vs (m/s)", [s.Vs for s in sites]),
+        ("Vp (m/s)", [s.Vp for s in sites]),
         ("μ (GPa)", [s.mu/1e9 for s in sites]),
-        ("κ (GPa)", [s.kappa/1e9 for s in sites]),
-        ("μ'", [s.mu_prime for s in sites]),
-        ("|β| (drained)", [abs(s.beta) for s in sites]),
+        ("κ_u undrained (GPa)", [s.kappa_u/1e9 for s in sites]),
+        ("κ_d drained (GPa)", [s.kappa_d/1e9 for s in sites]),
+        ("μ' (dμ/dP)", [s.mu_prime for s in sites]),
+        ("|β| (regime)", [abs(s.beta) for s in sites]),
         ("α_B", [s.alpha_B for s in sites]),
         ("B (Skempton)", [s.B_skemp for s in sites]),
         ("α_B·B", [s.alpha_B * s.B_skemp for s in sites]),
         ("|β_u/β_d|", [1/(1-s.alpha_B*s.B_skemp) for s in sites]),
-        ("|β| (undrained)", [abs(s.beta)/(1-s.alpha_B*s.B_skemp) for s in sites]),
         ("Permeability (m²)", [s.perm for s in sites]),
         ("Porosity", [s.phi for s in sites]),
         ("Depth (m)", [s.depth for s in sites]),

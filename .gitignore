@@ -8,3 +8,7 @@ paper/build/*
 !paper/build/*.md
 !paper/build/*.tex
 !paper/build/*.pdf
+
+# Python caches
+__pycache__/
+*.pyc

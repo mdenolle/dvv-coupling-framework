@@ -8,12 +8,17 @@ from analysis.poroelastic_framework import (
     beta_drained,
     beta_eff,
     beta_ratio_undrained_to_drained,
+    bridge_beta,
+    bulk_modulus,
     classify_drainage,
     drainage_frequency,
     drainage_peclet,
+    drained_bulk_modulus,
+    mu_prime_from_bridge,
     sensitivity_depth,
     thermoelastic_from_fitted_amplitude,
     thermoelastic_sensitivity_s_T,
+    undrained_poisson,
 )
 
 
@@ -88,6 +93,46 @@ def test_beta_eff_rejects_singular_coupling():
 
 def test_beta_drained_is_stress_sensitivity():
     assert beta_drained(100.0, 5.0e8) == pytest.approx(-1.0e-7)
+
+
+def test_bridge_beta_matches_manuscript_eq7():
+    # Parkfield: mu'=251, kappa_u=29.79 GPa, mu=15.62 GPa -> beta ~ -240.
+    beta = bridge_beta(251.0, 29.79e9, 15.62e9)
+    assert beta == pytest.approx(-239.3, rel=0.01)
+
+
+def test_mu_prime_from_bridge_is_inverse():
+    # Round-trip: beta -> mu' -> beta.
+    mu, kappa = 15.62e9, 29.79e9
+    beta = bridge_beta(251.0, kappa, mu)
+    assert mu_prime_from_bridge(beta, kappa, mu) == pytest.approx(251.0, rel=1e-9)
+
+
+def test_drained_modulus_smaller_than_undrained():
+    kappa_u = 4.86e9
+    kappa_d = drained_bulk_modulus(kappa_u, alpha_B=0.95, B=0.75)
+    assert kappa_d < kappa_u
+    assert kappa_d == pytest.approx(kappa_u * (1 - 0.95 * 0.75), rel=1e-12)
+
+
+def test_drained_modulus_rejects_singular_coupling():
+    with pytest.raises(ValueError):
+        drained_bulk_modulus(1.0e9, alpha_B=1.0, B=1.0)
+
+
+def test_undrained_poisson_never_below_drained():
+    # Thermodynamic requirement: nu_u >= nu_d for any valid alpha_B*B.
+    for nu_d in (0.05, 0.15, 0.25, 0.35):
+        for aB in (0.3, 0.7, 0.95):
+            for B in (0.3, 0.6, 0.9):
+                nu_u = undrained_poisson(nu_d, B, alpha_B=aB)
+                assert nu_u >= nu_d - 1e-9, (nu_d, aB, B, nu_u)
+                assert nu_u < 0.5 + 1e-9
+
+
+def test_bulk_modulus_is_undrained_seismic_value():
+    # Cascadia velocities -> kappa_u ~ 4.86 GPa.
+    assert bulk_modulus(1700.0, 500.0, 1900.0) == pytest.approx(4.86e9, rel=0.01)
 
 
 def test_thermoelastic_sensitivity_uses_dimensionless_derivative():

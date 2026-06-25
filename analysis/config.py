@@ -26,26 +26,39 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, computed_field
+from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
 
 try:  # package import
     from .poroelastic_framework import (
         OMEGA_ANNUAL,
         OMEGA_DAILY,
+        bridge_beta,
+        bulk_modulus,
         classify_drainage,
         drainage_peclet,
+        drained_bulk_modulus,
+        mu_prime_from_bridge,
         sensitivity_depth,
     )
 except ImportError:  # flat import (run from within analysis/)
     from poroelastic_framework import (
         OMEGA_ANNUAL,
         OMEGA_DAILY,
+        bridge_beta,
+        bulk_modulus,
         classify_drainage,
         drainage_peclet,
+        drained_bulk_modulus,
+        mu_prime_from_bridge,
         sensitivity_depth,
     )
 
 DepthRule = Literal["third_wavelength", "half_wavelength", "quarter_wavelength"]
+Regime = Literal["drained", "undrained"]
+BetaSource = Literal["bridge", "published"]
+
+#: Relative tolerance for the bridge-consistency check (β vs -μ'κ/2μ).
+_BRIDGE_RTOL = 0.03
 
 
 class SiteConfig(BaseModel):
@@ -92,8 +105,8 @@ class SiteConfig(BaseModel):
                 {
                     "name": "Parkfield (granite)",
                     "Vs": 2500.0,
+                    "Vp": 4500.0,
                     "rho": 2500.0,
-                    "nu": 0.25,
                     "mu_prime": 251.0,
                     "beta": -240.0,
                     "alpha_B": 0.7,
@@ -101,6 +114,8 @@ class SiteConfig(BaseModel):
                     "perm": 1e-15,
                     "phi": 0.05,
                     "depth": 800.0,
+                    "regime": "undrained",
+                    "beta_source": "bridge",
                     "kappa_T": 1.0e-6,
                     "alpha_T": 8e-6,
                 }
@@ -110,29 +125,82 @@ class SiteConfig(BaseModel):
 
     name: str = Field(..., min_length=1, description="Site label")
     Vs: float = Field(..., gt=0, description="Shear-wave velocity [m/s]")
+    Vp: float = Field(..., gt=0, description="Compressional-wave velocity [m/s]")
     rho: float = Field(..., gt=0, description="Bulk density [kg/m^3]")
-    nu: float = Field(..., ge=0.0, lt=0.5, description="Drained Poisson ratio")
-    mu_prime: float = Field(..., description="Normalized shear-pressure sensitivity")
-    beta: float = Field(..., description="Acoustoelastic stress sensitivity")
+    mu_prime: float = Field(..., description="dmu/dP, normalized shear-pressure sensitivity")
+    beta: float = Field(..., description="Strain-domain acoustoelastic parameter (typ. < 0)")
     alpha_B: float = Field(..., ge=0.0, le=1.0, description="Biot coefficient")
     B_skemp: float = Field(..., ge=0.0, le=1.0, description="Skempton B coefficient")
     perm: float = Field(..., gt=0, description="Permeability [m^2]")
     phi: float = Field(..., ge=0.0, le=1.0, description="Porosity")
     depth: float = Field(..., gt=0, description="Sensitivity depth [m]")
+    regime: Regime = Field(
+        "undrained",
+        description="Loading regime selecting which kappa enters the bridge "
+        "(set from the data-driven Peclet number; see provenance_tables.md)",
+    )
+    beta_source: BetaSource = Field(
+        "bridge",
+        description="'bridge' = beta derived from -mu'*kappa/(2mu); "
+        "'published' = beta calibrated in the source (e.g. Cascadia/Kidiwela)",
+    )
     kappa_T: float = Field(1.0e-6, gt=0, description="Thermal diffusivity [m^2/s]")
     alpha_T: float = Field(8.0e-6, gt=0, description="Thermal expansion [1/K]")
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def mu(self) -> float:
-        """Shear modulus mu = rho * Vs**2 [Pa]."""
+        """Shear modulus mu = rho * Vs**2 [Pa] (regime-independent)."""
         return self.rho * self.Vs**2
 
     @computed_field  # type: ignore[prop-decorator]
     @property
+    def kappa_u(self) -> float:
+        """Undrained (seismic-band) bulk modulus rho(Vp^2 - 4/3 Vs^2) [Pa]."""
+        return float(bulk_modulus(self.Vp, self.Vs, self.rho))
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def kappa_d(self) -> float:
+        """Drained bulk modulus kappa_u * (1 - alpha_B * B) [Pa]."""
+        return float(drained_bulk_modulus(self.kappa_u, self.alpha_B, self.B_skemp))
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
     def kappa(self) -> float:
-        """Drained bulk modulus kappa = 2 mu (1 + nu) / (3 (1 - 2 nu)) [Pa]."""
-        return 2 * self.mu * (1 + self.nu) / (3 * (1 - 2 * self.nu))
+        """Regime-appropriate bulk modulus that enters the bridge relation."""
+        return self.kappa_u if self.regime == "undrained" else self.kappa_d
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def nu(self) -> float:
+        """Poisson ratio implied by mu and the regime kappa (k>mu => nu>0.2)."""
+        k, m = self.kappa, self.mu
+        return (3 * k - 2 * m) / (2 * (3 * k + m))
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def beta_bridge(self) -> float:
+        """Strain-domain beta predicted by the bridge at the regime kappa."""
+        return float(bridge_beta(self.mu_prime, self.kappa, self.mu))
+
+    @model_validator(mode="after")
+    def _check_bridge_consistency(self) -> "SiteConfig":
+        """Enforce claim 1: a 'bridge'-sourced beta must satisfy -mu'*kappa/(2mu).
+
+        'published' betas (e.g. the borehole-calibrated Cascadia value) are
+        exempt from the equality but their implied mu' is still available via
+        :attr:`mu_prime` for the consistency check.
+        """
+        if self.beta_source == "bridge":
+            predicted = self.beta_bridge
+            if predicted == 0 or abs(self.beta - predicted) > _BRIDGE_RTOL * abs(predicted):
+                raise ValueError(
+                    f"{self.name}: stored beta={self.beta:.1f} violates the bridge "
+                    f"relation (-mu'*kappa/2mu={predicted:.1f}, rtol={_BRIDGE_RTOL}). "
+                    "Set beta to the bridge value or mark beta_source='published'."
+                )
+        return self
 
 
 class AnalysisConfig(BaseModel):
@@ -173,14 +241,21 @@ class AnalysisConfig(BaseModel):
 # Named site presets (literature-sourced; see coupling_tier_tests.py header)
 # ─────────────────────────────────────────────────────────────────────────────
 
-#: Parkfield: fractured Salinian granite at ~0.8 km depth (SAFOD).
+# All numerical values are grounded in docs/site_analyses/provenance_tables.md.
+# beta_source='bridge' => beta == -mu'*kappa/(2mu) (enforced); 'published' =>
+# beta is calibrated in the cited source and the bridge is a consistency check.
+
+#: Parkfield: fractured Salinian granite at ~0.8 km depth (SAFOD; Okubo 2024).
+#: Regime drained->transitional (Pe<1); we report the seismic kappa_u endpoint.
 PARKFIELD = SiteConfig(
     name="Parkfield (granite)",
-    Vs=2500.0,
+    Vs=2500.0,     # SAFOD, 0.8 km weathered granite
+    Vp=4500.0,     # -> kappa_u = 29.8 GPa, mu = 15.6 GPa
     rho=2500.0,
-    nu=0.25,
     mu_prime=251.0,
-    beta=-240.0,
+    beta=-240.0,   # directional (axial); bridge-consistent w/ kappa_u
+    beta_source="bridge",
+    regime="undrained",
     alpha_B=0.7,
     B_skemp=0.4,
     perm=1e-15,
@@ -190,14 +265,17 @@ PARKFIELD = SiteConfig(
     alpha_T=8e-6,
 )
 
-#: Cascadia: marine sediment ~0.2 km below the seafloor.
+#: Cascadia: marine sediment ~0.2 km below the seafloor (Kidiwela 2026).
+#: Pe ~= 2.5 (transitional->undrained) => seismic kappa_u justified.
 CASCADIA = SiteConfig(
     name="Cascadia (sediment)",
-    Vs=500.0,
+    Vs=500.0,      # paper 9.2.2 (Han 2017; USGS CVM)
+    Vp=1700.0,     # -> kappa_u = 4.86 GPa, mu = 0.475 GPa
     rho=1900.0,
-    nu=0.40,
-    mu_prime=618.0,
-    beta=-3160.0,
+    mu_prime=618.0,        # consistency-check output: -2mu*beta/kappa_u
+    beta=-3160.0,          # PUBLISHED: borehole-calibrated (Kidiwela 2026)
+    beta_source="published",
+    regime="undrained",
     alpha_B=0.95,
     B_skemp=0.75,
     perm=1e-13,
@@ -208,15 +286,17 @@ CASCADIA = SiteConfig(
 )
 
 #: Nepal Himalayas: post-Gorkha earthquake crust (Illien et al. 2022).
+#: ILLUSTRATIVE preset (not part of the §9 three-site application): the moduli
+#: and beta are bridge-consistent example values, not a calibrated fit.
 NEPAL = SiteConfig(
     name="Nepal (post-earthquake)",
     Vs=1500.0,
+    Vp=2600.0,     # Vp/Vs ~ 1.73 crust -> kappa_u = 9.02 GPa
     rho=2400.0,
-    nu=0.28,
     mu_prime=150.0,
-    # Preserve the original derived value: -150 * kappa / (2 mu).
-    beta=-150.0 * (2 * (2400.0 * 1500.0**2) * (1 + 0.28) / (3 * (1 - 2 * 0.28)))
-    / (2 * (2400.0 * 1500.0**2)),
+    beta=-125.3,   # bridge value at kappa_u
+    beta_source="bridge",
+    regime="undrained",
     alpha_B=0.8,
     B_skemp=0.5,
     perm=1e-14,
@@ -226,15 +306,18 @@ NEPAL = SiteConfig(
     alpha_T=7e-6,
 )
 
-#: Agricultural soil: vadose zone (Shi et al. 2026).
+#: Agricultural soil: vadose zone, partially saturated (Shi et al. 2026).
+#: ILLUSTRATIVE preset (not part of the §9 three-site application): the moduli
+#: and beta are bridge-consistent example values, not a calibrated fit.
 AGRICULTURAL = SiteConfig(
     name="Agricultural soil",
     Vs=200.0,
+    Vp=450.0,      # low Vp (air in pores) -> kappa_u = 0.239 GPa
     rho=1600.0,
-    nu=0.35,
     mu_prime=2000.0,
-    beta=-2000.0 * (2 * (1600.0 * 200.0**2) * (1 + 0.35) / (3 * (1 - 2 * 0.35)))
-    / (2 * (1600.0 * 200.0**2)),
+    beta=-3730.0,  # bridge value at kappa_u
+    beta_source="bridge",
+    regime="undrained",
     alpha_B=0.99,
     B_skemp=0.90,
     perm=1e-11,
@@ -251,6 +334,15 @@ PRESETS: dict[str, SiteConfig] = {
     "nepal": NEPAL,
     "agricultural": AGRICULTURAL,
 }
+
+
+def mu_prime_consistency(site: SiteConfig) -> float:
+    """mu' implied by the site's beta and regime kappa, via the inverse bridge.
+
+    For a 'published' beta (e.g. Cascadia/Kidiwela) this is the consistency
+    check: it should match the stored ``site.mu_prime``.
+    """
+    return float(mu_prime_from_bridge(site.beta, site.kappa, site.mu))
 
 
 def get_defaults() -> dict[str, object]:

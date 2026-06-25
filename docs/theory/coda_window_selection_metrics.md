@@ -12,6 +12,21 @@ dv/v = d(frequency band, lapse-time window, window duration, substack length, ti
 
 rather than as a single scalar time series or one fixed coda window.
 
+## Scope: a standalone companion paper, not a section of the framework paper
+
+This document develops a Bayesian uncertainty quantification (UQ) of dv/v with
+respect to processing choices (window, frequency, wave type, substack, estimator).
+After exploring whether it belongs in the unified-framework manuscript, the
+decision is that it is a **standalone companion paper + `codameter` software
+release**, because it has a distinct thesis (measurement *reproducibility/UQ* vs
+physical *interpretation*), its own validation burden (synthetic coverage tests +
+a real multi-station reproducibility study), and a self-contained hierarchical
+estimator. The framework paper keeps only the *conceptual framing* (the window is
+part of the kernel, Eq. 15) and the window-*sensitivity diagnostic*; it does not
+ship a turnkey UQ method. Full reasoning, novelty, method, validation plan, and
+journal targets are in the prospectus:
+[companion_paper_bayesian_dvv_uq.md](companion_paper_bayesian_dvv_uq.md).
+
 ## Theoretical Basis
 
 The standard frequency-depth relation can be written as
@@ -115,7 +130,7 @@ This gives a direct reproducibility diagnostic:
 The first implementation lives in `codameter.window_selection` and is intentionally data-agnostic:
 
 ```python
-from codameter import WindowEstimate, bayesian_window_average
+from codameter import WindowEstimate, window_sensitivity_diagnostic
 from codameter import rolling_lapse_windows, score_lapse_profile
 
 windows = rolling_lapse_windows(
@@ -143,7 +158,7 @@ centers = profile.centers_s
 scores = profile.objective
 eligible = profile.eligible(min_score=0.7)
 
-posterior = bayesian_window_average(
+posterior = window_sensitivity_diagnostic(
     profile,
     estimates={
         "lapse_000": WindowEstimate(mean=1.0e-4, sigma=1.0e-5),
@@ -164,7 +179,7 @@ Future waveform-processing layers should compute the observation metrics automat
 ## Critical Note on the Bayesian Inference (review of the GPT-5.5 proposal)
 
 > Author's note: the Bayesian model-averaging scheme above (the `exp(λJ)`-weighted
-> window average implemented in `bayesian_window_average`) was drafted by GPT-5.5.
+> window average implemented in `window_sensitivity_diagnostic`) was drafted by GPT-5.5.
 > It is a useful *framing* but an unsound *inference engine*. This section records
 > the critique and the recommended replacement so the package does not ship a
 > tunable number labelled "uncertainty." The rolling-profile diagnostics, the
@@ -252,7 +267,7 @@ fatal defects can be removed without one:
    estimate of `Var(θ)` that includes the between-window error covariance, so the
    reported `total_sigma` stops under-counting correlated error.
 
-Until then, `bayesian_window_average` should be documented and used as a
+Until then, `window_sensitivity_diagnostic` should be documented and used as a
 *diagnostic of window sensitivity*, not as a producer of publishable error bars.
 
 ---
@@ -398,7 +413,7 @@ p(M_j) \propto \exp(\lambda J_j)
   error bar. **Recommended practice:** use these weights only to *rank and gate*
   windows; for combining, prefer an out-of-sample predictive score, or equal
   weights over one representative window per wave-type regime.
-- **In code.** `bayesian_window_average(..., score_weight_scale=4.0)` — here
+- **In code.** `window_sensitivity_diagnostic(..., score_weight_scale=4.0)` — here
   `score_weight_scale` *is* `λ`, and the function literally calls `_softmax`.
 
 ### 8. The model-averaged answer
