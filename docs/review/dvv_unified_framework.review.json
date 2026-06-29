@@ -1,0 +1,43 @@
+{
+  "manuscript_id": "dvv_unified_framework",
+  "title": "Seismic Velocity Changes as Stress and Strain Meters: A Unified Framework for Environmental, Tectonic, and Volcanic Monitoring",
+  "provenance": {
+    "skill_version": "2.3",
+    "model": "claude-opus-4-8[1m]",
+    "iteration": 1,
+    "date": "2026-06-29",
+    "target_journal": "JGR: Solid Earth",
+    "manuscript_type": "research article",
+    "author_profile": "default",
+    "manuscript_hash": "0f7208382759",
+    "manuscript_path": "paper/paper_dvv_unified_framework.md"
+  },
+  "readiness": "revise-before-submission",
+  "fatal": [],
+  "issue_ledger": [
+    {"id": "M1", "criterion": "C5", "subagent": "S-AB.1,S-AB.11", "tier": "Fair", "status": "OPEN", "github_issue": 12, "summary": "Abstract ~378 words (>250 cap); mandatory Key Points absent"},
+    {"id": "M2", "criterion": "C3/C8", "subagent": "S-RP.4", "tier": "Good", "status": "OPEN", "github_issue": 4, "summary": "Software/data Zenodo DOI pending (AGU mandatory)"},
+    {"id": "M3", "criterion": "C2", "subagent": "S-ME.4", "tier": "Good", "status": "OPEN", "github_issue": 13, "summary": "thermoelastic d(rhoV2)/dsigma not unified with mu'/beta; soften §10.1 'same parameters'"},
+    {"id": "M4", "criterion": "C2", "subagent": "S-ME.7", "tier": "Good", "status": "OPEN", "github_issue": 13, "summary": "elastic beta assigned to inelastic Kilauea long-term (§9.3.4)"},
+    {"id": "M5", "criterion": "C5", "subagent": "S-FD.3", "tier": "Fair", "status": "OPEN", "github_issue": 14, "summary": "figures not in numerical citation order (Fig 2; SI S12)"},
+    {"id": "M6", "criterion": "C4", "subagent": "S-CO.7", "tier": "Good", "status": "OPEN", "github_issue": 15, "summary": "Conclusion 7 under-hedged (Cascadia calibration; directional order-of-mag)"},
+    {"id": "m1", "criterion": "C1", "subagent": "S-AB.6,S-IN.4", "tier": "Good", "status": "OPEN", "github_issue": 12, "summary": "front-load one-sentence novelty"},
+    {"id": "m2", "criterion": "C1", "subagent": "S-IN.5", "tier": "Good", "status": "OPEN", "summary": "add stakes sentence in §1.2"},
+    {"id": "m3", "criterion": "C2", "subagent": "S-ME.5", "tier": "Good", "status": "OPEN", "github_issue": 13, "summary": "Eq.5 cross-ref in §7.4/§10.4 step 5"},
+    {"id": "m4", "criterion": "C5", "subagent": "S-FD.9", "tier": "Good", "status": "OPEN", "github_issue": 14, "summary": "number the starred Eq.(*)"},
+    {"id": "m5", "criterion": "C5", "subagent": "S-FD.4", "tier": "Good", "status": "OPEN", "github_issue": 14, "summary": "trim interpretive captions; reconcile in-figure titles"},
+    {"id": "m6", "criterion": "C6", "subagent": "S-CD.9", "tier": "Good", "status": "OPEN", "github_issue": 5, "summary": "de-duplicate Hotovec-Ellis 2022 reference"},
+    {"id": "m7", "criterion": "C5", "subagent": "S-RE.2", "tier": "Good", "status": "OPEN", "summary": "Cascadia 3.8e-4 digit collision (dv/v rate vs diffusivity)"},
+    {"id": "m8", "criterion": "C5", "subagent": "S-RE.3", "tier": "Good", "status": "OPEN", "summary": "standardize Kilauea beta presentation (~300, range 250-330)"},
+    {"id": "m9", "criterion": "C4", "subagent": "S-DI.1", "tier": "Good", "status": "OPEN", "github_issue": 15, "summary": "add Move-1 findings summary opening §10"},
+    {"id": "m10", "criterion": "C6", "subagent": "S-DI.5,S-DI.6", "tier": "Good", "status": "OPEN", "github_issue": 15, "summary": "surface a contrasting result; weigh model-inadequacy on factor-N agreements"},
+    {"id": "m11", "criterion": "C7", "subagent": "S-DI.10", "tier": "Good", "status": "OPEN", "summary": "soften §10.3 'can be resolved' to in-principle"},
+    {"id": "m12", "criterion": "C3", "subagent": "S-RP.10", "tier": "Good", "status": "OPEN", "github_issue": 4, "summary": "seed jgr_main_figures.py; reconcile seed docs; unify version strings; state synthetic-generator basis in Data Availability"}
+  ],
+  "criterion_tiers": {
+    "C1": "Good", "C2": "Good", "C3": "Good", "C4": "Good",
+    "C5": "Fair", "C6": "Good", "C7": "Good", "C8": "Good"
+  },
+  "history": [],
+  "notes": "Iteration 1 full review. C8 checked at orchestrator level: AI use disclosed (sole author, AGU-compliant), CC BY 4.0, funding acknowledged; only compliance gap is the pending DOI (M2). For iteration 2, supply a before/after of the manuscript so the review reconciles each ledger ID and raises new findings only on changed text."
+}
