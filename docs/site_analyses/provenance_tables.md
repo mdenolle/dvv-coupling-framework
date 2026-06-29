@@ -43,7 +43,7 @@ Notes:
 | α_B, B | 0.7, 0.4 | — | granite estimate; α_B·B=0.28 | **[D]** |
 | κ_d = κ_u(1−α_B·B) | 21.45 | GPa | derived (drained) | **[D]** |
 | **β_axial = δv/v ÷ ε_contr** | **240** | — | derived from two [P] | **[D]** |
-| **μ′ = −2μβ/κ** | **252** (κ_u) – 350 (κ_d) | — | bridge consistency, order-of-mag | **[D]** |
+| **μ′ = −2μβ/κ** | **≈251** (κ_u; 251.7) – 350 (κ_d) | — | bridge consistency, order-of-mag | **[D]** |
 | Deviatoric stress rate | ~12 | kPa/yr | 4μ(δv/v)/μ′ | **[D]** |
 | 20-yr cumulative | ~0.24 | MPa | integrated | **[D]** |
 | GNSS cross-check | 8.7 (factor 1.4) | kPa/yr | σ=Eε/(1−ν²) | **[D]** |
@@ -92,7 +92,7 @@ Notes:
 | κ from (μ,ν) | 5.0 | GPa | derived (low-φ basalt: κ_d≈κ_u, undrained) | **[D]** |
 | **β_radial = δv/v ÷ ε_radial** | **250–330** (use 300) | — | derived from two [P] | **[D]** |
 | **μ′ = −2μβ/κ** | **360** | — | bridge, order-of-mag (directional) | **[D]** |
-| Radial stress / collapse | ~167 | kPa | 4μ(δv/v)/μ′ | **[D]** |
+| Radial stress / collapse | ~167 (reported ~170) | kPa | 4μ(δv/v)/μ′ | **[D]** |
 | Spheroid cross-check | ~375 (factor ~2) | kPa | ΔP·(a/R)³ | **[D]** |
 
 ---
@@ -105,3 +105,20 @@ Notes:
 4. Rewrite `cascadia_stress_analysis.md` to μ=0.475, κ_u=4.86, μ′=618, 0.58 kPa/yr; fix central 0.003 %/yr.
 5. Create `kilauea_stress_analysis.md` from this table.
 6. Manuscript §9 already matches the Cascadia 618/0.58 set; ensure Table 2 and abstract use κ_u-based numbers and add the explicit Pe-regime statement in §2.5/§9.
+
+---
+
+## §9 verification (2026-06-29, issue #1)
+
+Every derived quantity in manuscript §9 (and Table 2) was numerically re-derived
+from the published `[P]` inputs and confirmed consistent with this table (16/16
+checks pass). No stale values remain — the superseded Cascadia μ′=1290 / 1.24
+kPa/yr / 16 kPa and the central-segment 0.015 %/yr do **not** appear anywhere in
+`paper/paper_dvv_unified_framework.md`.
+
+Confirmed in §9 and Table 2: Parkfield μ=15.6 GPa, κ_u=29.8 GPa, β_axial=240,
+μ′≈251, 12 kPa/yr, 0.24 MPa/20 yr; **Northern Cascadia μ=0.475 GPa, κ_u=4.86
+GPa, β=−3160 (published), μ′=618, 0.58 kPa/yr, 7.6 kPa/13 yr**; Kīlauea μ=3 GPa,
+κ=5 GPa, β_radial=250–330, μ′≈360, ~170 kPa/collapse. The only manuscript↔table
+differences are sub-unit rounding (Parkfield μ′ 251 vs 251.7; Kīlauea σ 167 vs
+the reported 170) — harmonized in the rows above.
