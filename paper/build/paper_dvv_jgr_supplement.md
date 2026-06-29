@@ -11,7 +11,7 @@ corresponding_author: "mdenolle@uw.edu"
 - Text S1: preliminary application of the framework to three published datasets (Parkfield, Cascadia, Kīlauea).
 - Figures S1–S12: supporting forward-model and validity figures (synthetic $\delta v/v$ with realistic shapes, illustrating the framework).
 - Figure 7: three-site synthesis of the preliminary application.
-- Tables S1 and 2: parameter overview and three-site comparison.
+- Table 2 (inline in Text S1) and Table S1: three-site comparison and parameter overview.
 
 All quantitative inputs are traced to their sources in \texttt{docs/site\_analyses/provenance\_tables.md}.
 
@@ -129,6 +129,8 @@ The Kīlauea case extends the anisotropy diagnostic from §6 to volcanic setting
 
 **Table 2** summarizes the key parameters and predictions across all three sites; Figure 7 visualizes the same comparison as the main synthesis result.
 
+**Table 2.** Comparison of framework predictions across three tectonic settings: Parkfield (strike-slip, fractured granite), Northern Cascadia (subduction, marine sediment), and Kīlauea (volcanic caldera collapse, fractured basalt). Parameters include the effective acoustoelastic parameter $|\beta|$, inferred shear-modulus pressure derivative $\mu'$, stress perturbation, and the controlling strain component. The isotropic formulation $\delta v/v = \beta\epsilon_{kk}$ succeeds only at Cascadia (volumetric compression) and fails at both Parkfield and Kīlauea (deviatoric loading with preferred fracture orientations). Note that the directional $\beta$ values at Parkfield and Kīlauea use the bridge relation (Eq. 7) as an order-of-magnitude approximation.
+
 | Property | Parkfield | Northern Cascadia | Kīlauea (short-term) |
 |----------|-----------|-------------------|----------------------|
 | Tectonic setting | Strike-slip | Subduction (locked) | Volcanic caldera collapse |
@@ -149,14 +151,6 @@ The three-site comparison reveals a clear pattern: **the isotropic formulation w
 **Comparing $\delta v/v$ amplitudes across sites without normalizing by $\beta$ leads to qualitatively wrong conclusions about relative stress levels.** The Cascadia dv/v trend is 8× larger than Parkfield's, yet the Parkfield stress rate is 20× larger. The Kīlauea co-collapse signal (~0.5%) is 100× the Parkfield annual trend, but the stress perturbation (~170 kPa) is only 14× larger — the remaining factor of 7 is absorbed by the similar $\beta$ values and the very different timescales.
 
 ---
-
-\clearpage
-
-## Supporting Tables
-
-
-**Table 2.** Comparison of framework predictions across three tectonic settings: Parkfield (strike-slip, fractured granite), Northern Cascadia (subduction, marine sediment), and Kīlauea (volcanic caldera collapse, fractured basalt). Parameters include the effective acoustoelastic parameter $|\beta|$, inferred shear-modulus pressure derivative $\mu'$, stress perturbation, and the controlling strain component. The isotropic formulation $\delta v/v = \beta\epsilon_{kk}$ succeeds only at Cascadia (volumetric compression) and fails at both Parkfield and Kīlauea (deviatoric loading with preferred fracture orientations). Note that the directional $\beta$ values at Parkfield and Kīlauea use the bridge relation (Eq. 7) as an order-of-magnitude approximation.
-
 
 \clearpage
 

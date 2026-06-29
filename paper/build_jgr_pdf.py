@@ -121,29 +121,36 @@ def extract_manuscript(source: str) -> tuple[str, str, str, str, dict[str, str],
     keywords = abstract_match.group("keywords").strip()
     body = rest[abstract_match.end() :].lstrip()
 
-    caption_match = re.search(
-        r"\n## Main Figure and Table Captions\s*\n\n(?P<captions>.*?)(?=\n---\s*\n\n## References)",
+    # Figures are now inline: "![Figure N](path)\n\n**Figure N.** caption".
+    # Tables keep an inline "**Table N.** caption" above each pipe table.
+    figure_captions: dict[str, str] = {}
+    for n, caption in re.findall(
+        r"!\[Figure (\d+)\]\([^)]+\)\s*\n\n\*\*Figure \d+\.\*\*\s*(.+?)(?=\n\n)",
+        body,
+        flags=re.DOTALL,
+    ):
+        figure_captions[f"Figure {n}"] = f"Figure {n}. {' '.join(caption.split())}"
+
+    table_captions: dict[str, str] = {}
+    for n, caption in re.findall(
+        r"\*\*Table (\d+)\.\*\*\s*(.+?)(?=\n\n)", body, flags=re.DOTALL
+    ):
+        table_captions[f"Table {n}"] = f"Table {n}. {' '.join(caption.split())}"
+
+    # Body is returned with figures INLINE (Quarto/Markdown use it as-is);
+    # the PDF build calls strip_inline_figures() to relocate them to the end.
+    return title, abstract, keywords, body, figure_captions, table_captions
+
+
+def strip_inline_figures(body: str) -> str:
+    """Remove inline figure image+caption blocks (PDF relocates figures to end)."""
+    body = re.sub(
+        r"\n*!\[Figure \d+\]\([^)]+\)\s*\n\n\*\*Figure \d+\.\*\*\s*.+?(?=\n\n)",
+        "",
         body,
         flags=re.DOTALL,
     )
-    figure_captions: dict[str, str] = {}
-    table_captions: dict[str, str] = {}
-    if caption_match:
-        caption_block = caption_match.group("captions").strip()
-        entries = re.findall(
-            r"\*\*((?:Figure|Table) \d+)\.\*\*\s*(.*?)(?=\n\n\*\*(?:Figure|Table) \d+\.\*\*|\Z)",
-            caption_block,
-            flags=re.DOTALL,
-        )
-        for label, caption in entries:
-            full_caption = f"{label}. {' '.join(caption.split())}"
-            if label.startswith("Figure"):
-                figure_captions[label] = full_caption
-            else:
-                table_captions[label] = full_caption
-        body = body[: caption_match.start()] + "\n" + body[caption_match.end() :]
-
-    return title, abstract, keywords, body, figure_captions, table_captions
+    return re.sub(r"\n{3,}", "\n\n", body)
 
 
 def build_submission_markdown(
@@ -171,9 +178,9 @@ corresponding_author: "mdenolle@uw.edu"
 
 """
 
-    sections: list[str] = [metadata, front_matter, body.strip(), "\n\\clearpage\n\n## Table Captions\n"]
-    for label in sorted(table_captions):
-        sections.append(f"\n**{label}.** {table_captions[label].removeprefix(label + '. ')}\n")
+    # Tables stay inline (with inline captions) in the body; figures are
+    # relocated to the end here, per the AGU/JGR submission convention.
+    sections: list[str] = [metadata, front_matter, body.strip()]
 
     sections.append("\n\\clearpage\n\n\\section*{Figure Files}\n")
     for label, figure_path in FIGURE_FILES.items():
@@ -217,9 +224,7 @@ def build_agutex_markdown(
         "",
     ]
 
-    sections: list[str] = ["\n".join(metadata_lines), body.strip(), "\n\\clearpage\n\n## Table Captions\n"]
-    for label in sorted(table_captions):
-        sections.append(f"\n**{label}.** {table_captions[label].removeprefix(label + '. ')}\n")
+    sections: list[str] = ["\n".join(metadata_lines), body.strip()]
 
     sections.append("\n\\clearpage\n\n\\section*{Figure Files}\n")
     for label, figure_path in FIGURE_FILES.items():
@@ -306,12 +311,14 @@ corresponding_author: "mdenolle@uw.edu"
         "(synthetic $\\delta v/v$ with realistic shapes, illustrating the "
         "framework).\n"
         "- Figure 7: three-site synthesis of the preliminary application.\n"
-        "- Tables S1 and 2: parameter overview and three-site comparison.\n\n"
+        "- Table 2 (inline in Text S1) and Table S1: three-site comparison and "
+        "parameter overview.\n\n"
         "All quantitative inputs are traced to their sources in "
         "\\texttt{docs/site\\_analyses/provenance\\_tables.md}.\n"
     )
 
-    # Demote the §9 heading into a "Text S1" supplement section.
+    # Demote the §9 heading into a "Text S1" supplement section. Table 2 and its
+    # caption travel inline within this §9 text.
     data_app = re.sub(
         r"^## 9\. .*$",
         "## Text S1. Preliminary Application to Field Observations",
@@ -321,14 +328,6 @@ corresponding_author: "mdenolle@uw.edu"
     )
 
     sections = [metadata, intro, "\\clearpage\n", data_app]
-
-    # Table 2 (three-site comparison) travels with §9; Table S1 with the figures.
-    sections.append("\n\\clearpage\n\n## Supporting Tables\n")
-    for label in ("Table S1", "Table 2"):
-        if label in table_captions:
-            cap = table_captions[label].removeprefix(label + ". ")
-            cap = re.sub(r"`([^`]+)`", r"\\texttt{\1}", cap)
-            sections.append(f"\n**{label}.** {cap}\n")
 
     # Figure 7 (three-site synthesis) first, then S-figures.
     sections.append("\n\\clearpage\n\n\\section*{Supporting Figures}\n")
@@ -361,11 +360,12 @@ def main() -> None:
     # Cache Figure 7 caption so the supplement can render it.
     FIGURE_CAPTIONS_CACHE.update(figure_captions)
 
+    # PDF (publisher format): relocate inline figures to the end. Tables stay
+    # inline. Quarto/Markdown keep figures inline; this strip is PDF-only.
+    body = strip_inline_figures(body)
+
     # Replace §9 with a placeholder; keep the detailed application for the SI.
     body, data_application = split_data_application(body)
-
-    # Main text keeps Table 1; Table 2 (three-site comparison) travels with §9.
-    main_table_captions = {k: v for k, v in table_captions.items() if k != "Table 2"}
 
     generated_md = build_submission_markdown(
         title=title,
@@ -373,7 +373,7 @@ def main() -> None:
         keywords=keywords,
         body=body,
         figure_captions=figure_captions,
-        table_captions=main_table_captions,
+        table_captions=table_captions,
     )
 
     # Supporting Information (Text S1 = §9, S-figures, Figure 7, Table 2).
@@ -404,7 +404,7 @@ def main() -> None:
             keywords=keywords,
             body=body,
             figure_captions=figure_captions,
-            table_captions=main_table_captions,
+            table_captions=table_captions,
         ),
         encoding="utf-8",
     )

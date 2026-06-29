@@ -49,6 +49,8 @@ Several gaps persist:
 
 This paper addresses these gaps by developing a unified framework connecting $\delta v/v$ to stress, strain, and rheology through nonlinear elasticity. Figure 1 summarizes the workflow, from forcing and sensitivity kernels to mechanism diagnosis and the future `codameter` implementation package. We present the theory (Section 2), quantitative scenario models for thermoelastic (Section 3), hydrological including partially saturated (Section 4), nonlinear elastic (Section 5), and anisotropic (Section 6) effects. We then develop the rheological inversion framework with emphasis on depth-resolved imaging and reproducible coda-window selection (Section 7), map validity ranges (Section 8), apply the framework quantitatively to three contrasting sites — Parkfield (strike-slip), Cascadia (subduction), and Kīlauea (volcanic) — predicting stress at depth from published $\delta v/v$ measurements (Section 9), and discuss implications (Section 10).
 
+*Figures 1, 2, 3, 5, and 6 are schematic/illustrative, using synthetic $\delta v/v$ with physically realistic shapes to convey the framework's structure and diagnostics. Figures 4 and 7 and Table 2 report the quantitative three-site results derived from published measurements (§9); all numerical inputs are traced to their sources in `docs/site_analyses/provenance_tables.md`.*
+
 ---
 
 ## 2. Unified Theoretical Framework: $\delta v/v$ as Both Stress and Strain Meter
@@ -342,6 +344,8 @@ The linear acoustoelastic approximation is valid for strains below \textasciitil
 
 Table 1 summarizes the main parameters, ranges, and validity limits needed for applying the framework; the full parameter overview is provided as Table S1.
 
+**Table 1.** Key parameters and validity limits for applying the framework. The full parameter overview, including additional ranges and citations, is provided in Table S1.
+
 | Parameter | Typical range | Primary control | Main limitation |
 |---|---:|---|---|
 | $\kappa_T$ | 0.15–2.0 mm$^2$/s | Thermoelastic skin depth | Strongly site and moisture dependent |
@@ -450,9 +454,6 @@ M.A.D. acknowledges support from the Packard Foundation and the Murdock Charitab
 ## Data Availability
 
 The companion Jupyter notebooks and figure-generation code are maintained in this repository and will be archived on Zenodo before publication; the archive DOI is pending. The notebooks use standard Python scientific libraries (NumPy, SciPy, Matplotlib).
-
----
-
 
 ---
 
@@ -619,14 +620,6 @@ Zhang, S., Luo, B., Ben-Zion, Y., Lumley, D. E., & Zhu, H. (2023). Monitoring te
 Zhang, H., Thurber, C., & Bedrosian, P. (2009). Joint inversion for Vp, Vs, and Vp/Vs at SAFOD, Parkfield, California. *Geochemistry, Geophysics, Geosystems*, 10, Q11002.
 
 Zhu, T., Ajo-Franklin, J., Daley, T. M., & Marone, C. (2019). Dynamics of geologic CO$_2$ storage and plume motion revealed by seismic coda waves. *Proceedings of the National Academy of Sciences*, 116, 2464–2469.
-
-\clearpage
-
-## Table Captions
-
-
-**Table 1.** Key parameters and validity limits for applying the framework. The full parameter overview, including additional ranges and citations, is provided in Table S1.
-
 
 \clearpage
 

@@ -96,35 +96,12 @@ format:
 
     abstract_block = f"## Abstract\n\n{abstract}\n\n**Keywords:** {keywords}\n\n"
 
-    # Insert Figures + Tables before the References section.
-    refs_idx = body.find("\n## References")
-    if refs_idx != -1:
-        body_main, body_refs = body[:refs_idx], body[refs_idx:]
-    else:
-        body_main, body_refs = body, ""
+    # Figures and table captions are already INLINE in the canonical Markdown.
+    # Only rebase the figure image paths for the site directory
+    # (canonical uses ../figures relative to paper/; the qmd lives in paper/site).
+    body = body.replace("](../figures/", f"]({FIG_REL}/")
 
-    figures = ["\n## Figures\n"]
-    for label, fname in MAIN_FIGURES.items():
-        cap = figure_captions.get(label, label)
-        figures.append("\n" + figure_block(label, cap, f"{FIG_REL}/main/{fname}"))
-
-    tables = ["\n## Table Captions\n"]
-    for label in sorted(table_captions):
-        cap = table_captions[label].removeprefix(label + ". ")
-        tables.append(f"\n**{label}.** {cap}\n")
-
-    return (
-        front
-        + abstract_block
-        + body_main.strip()
-        + "\n\n"
-        + "\n".join(figures)
-        + "\n"
-        + "\n".join(tables)
-        + "\n\n"
-        + body_refs.strip()
-        + "\n"
-    )
+    return front + abstract_block + body.strip() + "\n"
 
 
 def parse_supporting_figures(text: str) -> list[tuple[str, str, str]]:
