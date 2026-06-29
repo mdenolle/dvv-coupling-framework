@@ -12,3 +12,7 @@ paper/build/*
 # Python caches
 __pycache__/
 *.pyc
+
+# Quarto website output
+paper/site/_site/
+paper/site/.quarto/

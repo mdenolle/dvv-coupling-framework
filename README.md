@@ -209,6 +209,14 @@ This converts `paper/paper_dvv_unified_framework.md` to LaTeX with Pandoc and co
 
 The local template is a JGR-style submission layout (12 pt, double-spaced, line numbered); it is not the official AGU `agujournal2019.cls`, which is not vendored in this repository.
 
+### Three rendered formats from one source
+
+The manuscript (`paper/paper_dvv_unified_framework.md`) is the single source of truth; three build targets stay in sync with it:
+
+1. **Markdown** — the canonical `paper/paper_dvv_unified_framework.md` (full paper, including §9).
+2. **JGR tex + PDF** — `pixi run paper-pdf` (main PDF with §9 placeholder + Figs 1–6, plus a Supporting Information PDF; AGUTeX source for Overleaf).
+3. **Quarto HTML website** — `pixi run paper-site` builds a small website under `paper/site/` (rendered to `paper/site/_site/`): a **Paper** page (full text, Figures 1–7) and a **Supporting Information** page (Figures S1–S12). Pages are self-contained (`embed-resources: true`), so `paper/site/_site/index.html` opens standalone and is deployable as-is (e.g., GitHub Pages). Requires [Quarto](https://quarto.org) on the PATH.
+
 The same command also writes `paper/build/paper_dvv_agutex_jgr_solid_earth.tex`, an AGUTeX source file configured with `\journalname{JGR: Solid Earth}` for the official AGU/Overleaf `agujournal2019` template. Overleaf lists official AGU JGR templates for the shared AGUTeX class, but no separate JGR: Solid Earth template was found; use the official AGU JGR template and preserve the `figures/main/` paths when uploading the generated source and figures.
 
 ## Key Results

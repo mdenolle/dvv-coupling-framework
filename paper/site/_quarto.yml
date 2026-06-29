@@ -1,0 +1,20 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "dv/v Unified Framework"
+  reader-mode: true
+  navbar:
+    left:
+      - href: index.qmd
+        text: "Paper"
+      - href: supplement.qmd
+        text: "Supporting Information"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    embed-resources: true
+    html-math-method: mathjax

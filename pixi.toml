@@ -9,6 +9,7 @@ version = "0.1.0"
 lab = { cmd = "jupyter lab analysis/", description = "Open JupyterLab in the analysis folder" }
 test = { cmd = "pytest tests/", description = "Run the unit test suite", env = { MPLBACKEND = "Agg" } }
 paper-pdf = { cmd = "python paper/build_jgr_pdf.py", description = "Build the JGR-style manuscript PDF from Markdown" }
+paper-site = { cmd = "python paper/build_quarto.py", description = "Build the Quarto HTML website from Markdown" }
 
 [dependencies]
 numpy = ">=2.4.3,<3"
