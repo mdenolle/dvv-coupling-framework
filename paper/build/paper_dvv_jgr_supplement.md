@@ -115,11 +115,11 @@ The radial stress perturbation at ~2 km from the reservoir, estimated from Equat
 
 #### 9.3.4 The long-term: inelastic fracture creation
 
-The long-term velocity decrease (–0.3%/day for ~26 days, total ~–8%, though Hotovec-Ellis et al. note that whether these accumulated changes combine linearly is unresolved) ceased when the peripheral ring fault completed its formation at the surface. Hotovec-Ellis et al. attribute this to *inelastic* fracture creation during fault growth — a mechanism outside the purely elastic acoustoelastic framework of Equation 3. Using the GNSS shortening rate across the caldera (~40 mm/day, $\epsilon \approx 20$ μstrain/day):
+The long-term velocity decrease (–0.3%/day for ~26 days, total ~–8%, though Hotovec-Ellis et al. note that whether these accumulated changes combine linearly is unresolved) ceased when the peripheral ring fault completed its formation at the surface. Hotovec-Ellis et al. attribute this to *inelastic* fracture creation during fault growth — a mechanism outside the purely elastic acoustoelastic framework of Equation 3. Because the process is inelastic, the ratio of velocity change to strain is **not** an acoustoelastic $\beta$; we report it only as an *apparent* $\delta v/v$–strain ratio that summarizes the net response. Using the GNSS shortening rate across the caldera (~40 mm/day, $\epsilon \approx 20$ μstrain/day):
 
-$$|\beta_{\text{long-term}}| = \frac{0.003}{2 \times 10^{-5}} \approx 150$$
+$$R_{\text{app}} = \frac{\delta v/v}{\epsilon} = \frac{0.003}{2 \times 10^{-5}} \approx 150 \quad (\text{apparent, not an elastic } \beta)$$
 
-The lower effective $|\beta|$ for the long-term signal (150 vs. 300 for the short-term) is physically meaningful: it reflects the competition between elastic crack closure (which increases velocity) and inelastic fracture generation (which decreases velocity). The net $\delta v/v$ per unit strain is smaller because new cracks partially offset the stiffening from closure of existing cracks — a signature of *damage accumulation* that is absent in the purely elastic short-term response.
+The apparent ratio is lower than the short-term elastic value ($\beta_{\text{radial}} \approx 300$), and this contrast is physically meaningful precisely because the two regimes are governed by different physics: the short term is elastic crack closure (which increases velocity), while the long term superposes *inelastic* fracture generation (which decreases velocity). The smaller $R_{\text{app}}$ reflects new cracks partially offsetting the stiffening from closure of existing cracks — a signature of *damage accumulation* that the elastic acoustoelastic relation cannot represent and that should not be inverted for stress with Equation 4.
 
 #### 9.3.5 Implications for fracture geometry as a diagnostic
 

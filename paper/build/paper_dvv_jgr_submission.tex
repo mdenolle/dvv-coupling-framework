@@ -519,6 +519,25 @@ combined temperature sensitivity (Ermert et al., 2023, their Eq. 3) is
 \(s_T = 2b\alpha \, \partial(\rho v^2)/\partial\sigma_c\), where
 \(\alpha\) is the thermal expansion coefficient.
 
+The thermoelastic sensitivity \(\partial(\rho v^2)/\partial\sigma_c\) is
+not an independent material parameter. For shear waves
+\(\rho v_S^2 = \mu\), so
+
+\[\frac{\partial(\rho v_S^2)}{\partial\sigma_c} = \frac{\partial\mu}{\partial\sigma_c} = \mu' \tag{9b}\]
+
+neglecting the comparatively small density-change term
+(\textasciitilde{}2--3 orders smaller; §2.6). The thermoelastic stress
+sensitivity is therefore the \emph{same} shear-modulus pressure
+derivative \(\mu'\) that appears in the induced-stress relation (Eq. 4)
+and, through the bridge relation (Eq. 7), in the acoustoelastic
+parameter \(\beta = -\mu'\kappa/(2\mu)\). A single depth profile
+\(\mu'(z)\) thus governs the thermoelastic, hydrological, and tectonic
+limbs of the framework --- which is why the published ranges for
+\(\partial(\rho v^2)/\partial\sigma_c\) (\textasciitilde{}50--1000;
+§3.3) and for \(\mu'\) (Fokker et al., 2021) coincide. This identity is
+the quantitative core of the ``unified'' framework and is the basis for
+the consistency expectation in §10.1.
+
 \subsection{3.3 Sensitivity Analysis}\label{sensitivity-analysis}
 
 Our sensitivity analysis (Figure S3) reveals that
@@ -1190,10 +1209,18 @@ Elasticity}\label{the-unifying-power-of-nonlinear-elasticity}
 All \(\delta v/v\) sources --- thermoelastic, hydrological, tectonic,
 volcanic --- operate through the same mechanism: stress-dependent
 modification of elastic moduli via compliant porosity and microcracks.
-The \emph{same} material parameters (\(\beta\), \(\mu'\),
-\(\partial(\rho v^2)/\partial\sigma_c\)) should consistently explain all
-forcings at a given site. Inconsistencies diagnose either unmodeled
-forcings or violations of the isotropic assumption.
+This is not merely a conceptual unity: the three sensitivity parameters
+reduce to one. For shear waves the thermoelastic sensitivity equals the
+induced-stress pressure derivative,
+\(\partial(\rho v^2)/\partial\sigma_c = \mu'\) (Eq. 9b), and the
+acoustoelastic parameter follows from the bridge relation,
+\(\beta = -\mu'\kappa/(2\mu)\) (Eq. 7). A single material property ---
+the shear-modulus pressure derivative \(\mu'(z)\) --- therefore governs
+all forcings at a given site, so the \emph{same} \(\mu'(z)\) must
+consistently explain the thermoelastic, hydrological, and tectonic
+responses. Inconsistencies diagnose either unmodeled forcings or
+violations of the isotropic assumption (under deviatoric loading the
+scalar \(\beta\) no longer suffices; §6).
 
 \subsection{10.2 The Capillary Frontier}\label{the-capillary-frontier}
 
@@ -1270,7 +1297,9 @@ We summarize the steps a researcher would take to apply this framework:
   temperature records, compute the thermoelastic \(\delta v/v\) via the
   Berger-Richter model (Eqs. 8--9). Using precipitation and/or
   groundwater data, compute the hydrological \(\delta v/v\) via the
-  Roeloffs-Fokker model (Eq. 5). Integrate depth-dependent
+  Roeloffs-Fokker model (Eq. 5 gives the Rayleigh/SV and Love/SH
+  endmembers; for component-specific or arbitrary propagation geometry
+  use the full directional form, Eq. 4). Integrate depth-dependent
   \(\delta V_S/V_S(z,t)\) through the kernels (Eq. 1 or Eq. 15) to
   predict \(\delta v/v(f,\tau,W,t)\).
 \item

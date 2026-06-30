@@ -39,18 +39,20 @@
       "criterion": "C2",
       "subagent": "S-ME.4",
       "tier": "Good",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "github_issue": 13,
-      "summary": "thermoelastic d(rhoV2)/dsigma not unified with mu'/beta; soften §10.1 'same parameters'"
+      "summary": "thermoelastic d(rhoV2)/dsigma not unified with mu'/beta; soften §10.1 'same parameters'",
+      "resolved_in": "issue #13"
     },
     {
       "id": "M4",
       "criterion": "C2",
       "subagent": "S-ME.7",
       "tier": "Good",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "github_issue": 13,
-      "summary": "elastic beta assigned to inelastic Kilauea long-term (§9.3.4)"
+      "summary": "elastic beta assigned to inelastic Kilauea long-term (§9.3.4)",
+      "resolved_in": "issue #13"
     },
     {
       "id": "M5",
@@ -94,9 +96,10 @@
       "criterion": "C2",
       "subagent": "S-ME.5",
       "tier": "Good",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "github_issue": 13,
-      "summary": "Eq.5 cross-ref in §7.4/§10.4 step 5"
+      "summary": "Eq.5 cross-ref in §7.4/§10.4 step 5",
+      "resolved_in": "issue #13"
     },
     {
       "id": "m4",
@@ -179,7 +182,7 @@
   ],
   "criterion_tiers": {
     "C1": "Good",
-    "C2": "Good",
+    "C2": "Good (M3/M4 resolved)",
     "C3": "Good",
     "C4": "Good",
     "C5": "Fair",
@@ -188,5 +191,5 @@
     "C8": "Good"
   },
   "history": [],
-  "notes": "Iteration 1 full review. C8 checked at orchestrator level: AI use disclosed (sole author, AGU-compliant), CC BY 4.0, funding acknowledged; only compliance gap is the pending DOI (M2). For iteration 2, supply a before/after of the manuscript so the review reconciles each ledger ID and raises new findings only on changed text. | 2026-06-29: M1 (abstract trimmed to 244 words + Key Points added), m1 (novelty front-loaded in abstract & §1.4), m2 (stakes sentence in §1.2) RESOLVED via issue #12."
+  "notes": "Iteration 1 full review. C8 checked at orchestrator level: AI use disclosed (sole author, AGU-compliant), CC BY 4.0, funding acknowledged; only compliance gap is the pending DOI (M2). For iteration 2, supply a before/after of the manuscript so the review reconciles each ledger ID and raises new findings only on changed text. | 2026-06-29: M1 (abstract trimmed to 244 words + Key Points added), m1 (novelty front-loaded in abstract & §1.4), m2 (stakes sentence in §1.2) RESOLVED via issue #12. | 2026-06-29: M3 (Eq.9b: dv/v thermoelastic sensitivity = mu' for S-waves, unifies the parameter set; §10.1 rewritten as derived), M4 (Kilauea long-term relabeled apparent ratio R_app, not elastic beta), m3 (Eq.5 endmember vs Eq.4 clarified in §10.4) RESOLVED via issue #13."
 }
