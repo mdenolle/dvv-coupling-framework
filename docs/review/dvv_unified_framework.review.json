@@ -69,9 +69,10 @@
       "criterion": "C4",
       "subagent": "S-CO.7",
       "tier": "Good",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "github_issue": 15,
-      "summary": "Conclusion 7 under-hedged (Cascadia calibration; directional order-of-mag)"
+      "summary": "Conclusion 7 under-hedged (Cascadia calibration; directional order-of-mag)",
+      "resolved_in": "issue #15"
     },
     {
       "id": "m1",
@@ -153,26 +154,29 @@
       "criterion": "C4",
       "subagent": "S-DI.1",
       "tier": "Good",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "github_issue": 15,
-      "summary": "add Move-1 findings summary opening §10"
+      "summary": "add Move-1 findings summary opening §10",
+      "resolved_in": "issue #15"
     },
     {
       "id": "m10",
       "criterion": "C6",
       "subagent": "S-DI.5,S-DI.6",
       "tier": "Good",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "github_issue": 15,
-      "summary": "surface a contrasting result; weigh model-inadequacy on factor-N agreements"
+      "summary": "surface a contrasting result; weigh model-inadequacy on factor-N agreements",
+      "resolved_in": "issue #15"
     },
     {
       "id": "m11",
       "criterion": "C7",
       "subagent": "S-DI.10",
       "tier": "Good",
-      "status": "OPEN",
-      "summary": "soften §10.3 'can be resolved' to in-principle"
+      "status": "RESOLVED",
+      "summary": "soften §10.3 'can be resolved' to in-principle",
+      "resolved_in": "issue #15"
     },
     {
       "id": "m12",
@@ -188,12 +192,12 @@
     "C1": "Good",
     "C2": "Good (M3/M4 resolved)",
     "C3": "Good",
-    "C4": "Good",
+    "C4": "Good (M6 hedged)",
     "C5": "Good (M1/M5/m4 resolved; m5 partial)",
-    "C6": "Good",
+    "C6": "Good (contrasting interpretations surfaced)",
     "C7": "Good",
     "C8": "Good"
   },
   "history": [],
-  "notes": "Iteration 1 full review. C8 checked at orchestrator level: AI use disclosed (sole author, AGU-compliant), CC BY 4.0, funding acknowledged; only compliance gap is the pending DOI (M2). For iteration 2, supply a before/after of the manuscript so the review reconciles each ledger ID and raises new findings only on changed text. | 2026-06-29: M1 (abstract trimmed to 244 words + Key Points added), m1 (novelty front-loaded in abstract & §1.4), m2 (stakes sentence in §1.2) RESOLVED via issue #12. | 2026-06-29: M3 (Eq.9b: dv/v thermoelastic sensitivity = mu' for S-waves, unifies the parameter set; §10.1 rewritten as derived), M4 (Kilauea long-term relabeled apparent ratio R_app, not elastic beta), m3 (Eq.5 endmember vs Eq.4 clarified in §10.4) RESOLVED via issue #13. | 2026-06-29: M5 (main figures renumbered to citation order 1-7 + SI S1-S12 reordered; files renamed; generator+build updated), m4 (starred eq numbered 11b), m5 (interpretive captions trimmed; in-figure titles deferred) via issue #14."
+  "notes": "Iteration 1 full review. C8 checked at orchestrator level: AI use disclosed (sole author, AGU-compliant), CC BY 4.0, funding acknowledged; only compliance gap is the pending DOI (M2). For iteration 2, supply a before/after of the manuscript so the review reconciles each ledger ID and raises new findings only on changed text. | 2026-06-29: M1 (abstract trimmed to 244 words + Key Points added), m1 (novelty front-loaded in abstract & §1.4), m2 (stakes sentence in §1.2) RESOLVED via issue #12. | 2026-06-29: M3 (Eq.9b: dv/v thermoelastic sensitivity = mu' for S-waves, unifies the parameter set; §10.1 rewritten as derived), M4 (Kilauea long-term relabeled apparent ratio R_app, not elastic beta), m3 (Eq.5 endmember vs Eq.4 clarified in §10.4) RESOLVED via issue #13. | 2026-06-29: M5 (main figures renumbered to citation order 1-7 + SI S1-S12 reordered; files renamed; generator+build updated), m4 (starred eq numbered 11b), m5 (interpretive captions trimmed; in-figure titles deferred) via issue #14. | 2026-06-29: M6 (Conclusion 7 hedged: Cascadia=calibration consistency check, directional beta/mu' order-of-mag), m9 (Move-1 findings summary opening §10), m10 (alternatives surfaced: healing-trend tradeoff, consolidation, source-side; factor-N agreements framed as consistency checks), m11 ('can be resolved' softened to in-principle) via issue #15."
 }

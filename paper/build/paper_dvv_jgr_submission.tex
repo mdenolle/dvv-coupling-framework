@@ -1056,10 +1056,10 @@ multi-frequency \(\delta v/v\) combined with GNSS tilt can distinguish
 between shallow magma chamber pressurization (high-frequency
 \(\delta v/v\) signal) and deep magma supply (low-frequency signal +
 GNSS displacement). In hydrological settings, the depth-dependent
-balance between loading and pore-pressure effects (Section 4.3) can be
-resolved rather than assumed. In tectonic settings, the depth of stress
-accumulation can be constrained, potentially distinguishing between
-shallow fault locking and deeper aseismic creep.
+balance between loading and pore-pressure effects (Section 4.3) can in
+principle be resolved rather than assumed. In tectonic settings, the
+depth of stress accumulation can be constrained, potentially
+distinguishing between shallow fault locking and deeper aseismic creep.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1203,6 +1203,21 @@ work (§10.5).
 
 \section{10. Discussion}\label{discussion}
 
+This framework yields three transferable results (summarized in Table
+2). First, the same shear-modulus pressure derivative \(\mu'(z)\)
+underlies the thermoelastic, hydrological, and tectonic responses, so a
+single material profile --- not three independent sensitivities ---
+governs \(\delta v/v\) at a site. Second, whether the scalar relation
+\(\delta v/v = \beta\epsilon_{kk}\) applies is set by the loading
+geometry and fracture fabric: it succeeds for predominantly volumetric
+loading (Cascadia) and fails under deviatoric loading with oriented
+cracks (Parkfield, Kīlauea), where the controlling strain component must
+be identified. Third, because \(\delta v/v\) amplitudes scale with
+\(\beta\), raw amplitudes cannot be compared across sites without
+normalizing by the material sensitivity (§9.4). We now discuss the
+unifying mechanism, the alternatives these results must be weighed
+against, monitoring implications, a practical workflow, and limitations.
+
 \subsection{10.1 The Unifying Power of Nonlinear
 Elasticity}\label{the-unifying-power-of-nonlinear-elasticity}
 
@@ -1221,6 +1236,28 @@ consistently explain the thermoelastic, hydrological, and tectonic
 responses. Inconsistencies diagnose either unmodeled forcings or
 violations of the isotropic assumption (under deviatoric loading the
 scalar \(\beta\) no longer suffices; §6).
+
+These site-by-site successes should be weighed against alternative
+explanations rather than read as validation. The quantitative agreements
+in §9 --- within a factor of 1.4 at Parkfield and a factor of 2 at
+Kīlauea --- are consistency checks computed with a bridge relation that,
+applied to a single loading direction, is only order-of-magnitude (Eq. 7
+was derived for isotropic loading; §2.5); they constrain the mechanism
+but do not uniquely confirm it. Competing interpretations remain viable.
+At Parkfield, the secular \(\delta v/v\) increase may partly reflect the
+long tail of post-2004 logarithmic healing rather than purely
+inter-seismic loading --- the healing--trend trade-off is intrinsic and
+underdetermined without independent constraints (§7.1; Okubo et al.,
+2024). At Cascadia, progressive sediment consolidation or dewatering of
+the accretionary wedge could contribute to the trend alongside elastic
+strain accumulation, a mechanism the elastic framework does not
+separate. More generally, apparent \(\delta v/v\) from seasonal changes
+in the noise-source field (Zhan et al., 2013) can masquerade as a
+secular signal if unmitigated. Discriminating among these requires the
+independent geodetic, multi-frequency, and multi-component constraints
+emphasized throughout: the framework sharpens and quantifies the
+competing hypotheses but, on published data alone, does not exclude
+them.
 
 \subsection{10.2 The Capillary Frontier}\label{the-capillary-frontier}
 
@@ -1243,11 +1280,11 @@ Applications}\label{implications-for-monitoring-applications}
 For \textbf{volcanic monitoring}, environmental signals of
 \textasciitilde{}0.05\% can mask pre-eruptive signals. The framework
 enables forward modeling of expected environmental \(\delta v/v\), and
-the anisotropic formulation can detect oriented magmatic stress. The
-Kīlauea case (§9.3) demonstrates that the dominant fracture fabric ---
-ring fractures vs.~radial dikes --- determines the \emph{sign} of the
-\(\delta v/v\) response to reservoir pressurization, a prediction
-testable at other caldera systems.
+the anisotropic formulation could in principle detect oriented magmatic
+stress. The Kīlauea case (§9.3) demonstrates that the dominant fracture
+fabric --- ring fractures vs.~radial dikes --- determines the
+\emph{sign} of the \(\delta v/v\) response to reservoir pressurization,
+a prediction testable at other caldera systems.
 
 For \textbf{tectonic monitoring}, the Parkfield case shows
 \(\delta v/v\) detects inter-seismic loading at
@@ -1258,7 +1295,9 @@ dilatational strain alone cannot explain the observation (Okubo et al.,
 For \textbf{hydrological monitoring}, the depth-resolved approach
 (Section 7.3) can separate shallow capillary effects from deep
 pore-pressure changes, and the competition between loading and
-pore-pressure effects can be resolved rather than assumed.
+pore-pressure effects can in principle be resolved rather than assumed,
+given adequate multi-frequency coverage and independent constraints (no
+worked example is presented here).
 
 \subsection{10.4 Practical Workflow for Applying the Framework at a New
 Site}\label{practical-workflow-for-applying-the-framework-at-a-new-site}
@@ -1399,14 +1438,21 @@ tests and independent strain or hydrological observations.
   At Parkfield, the framework predicts a deviatoric stress rate of
   \textasciitilde12 kPa/yr at \textasciitilde0.8 km depth with
   \(\beta_{\text{axial}} \approx 240\) and \(\mu' \approx 250\),
-  cross-checked against GNSS strain. At Cascadia, the
-  borehole-calibrated framework gives an isotropic stress rate of 0.58
-  kPa/yr at \textasciitilde0.2 km depth with \(\beta \approx 3160\) and
-  \(\mu' \approx 620\). At Kīlauea, co-collapse radial stress of
+  cross-checked against GNSS strain (agreement to a factor of 1.4). At
+  Cascadia, the framework reproduces an isotropic stress rate of 0.58
+  kPa/yr at \textasciitilde0.2 km depth with \(\mu' \approx 620\) ---
+  but here \(\beta \approx 3160\) is itself calibrated from the borehole
+  strain, so this is an internal consistency check, not an independent
+  validation. At Kīlauea, a co-collapse radial stress of
   \textasciitilde170 kPa is recovered from \(\delta v/v \approx 0.5\%\)
   with \(\beta_{\text{radial}} \approx 300\) and \(\mu' \approx 360\),
   consistent with the geodetically constrained reservoir pressure change
-  within a factor of 2. The effective \(|\beta|\) for fractured
+  within a factor of 2. The directional \(\beta\) (and hence \(\mu'\))
+  at Parkfield and Kīlauea follow from the bridge relation applied to a
+  single loading direction and are order-of-magnitude estimates (Eq. 7
+  was derived for isotropic loading). These results use only published
+  measurements; end-to-end validation on independently reprocessed data
+  is future work (§10.5). The effective \(|\beta|\) for fractured
   crystalline rock (granite, basalt) clusters around 200--400, while
   unconsolidated marine sediment gives \(|\beta| \sim 3000\).
 \item
