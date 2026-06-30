@@ -161,7 +161,7 @@ def figure_02_depth_kernels():
     axes[2].legend(frameon=False)
 
     fig.suptitle("Frequency-dependent depth sensitivity and inversion limits", fontsize=14, weight="bold")
-    fig.savefig(OUTDIR / "fig02_depth_kernels.png", bbox_inches="tight")
+    fig.savefig(OUTDIR / "fig06_depth_kernels.png", bbox_inches="tight")
     plt.close(fig)
 
 
@@ -195,7 +195,7 @@ def figure_03_hydrological_competition():
     axes[0].set_ylabel("$\\delta v/v$ (%)")
     axes[1].legend(frameon=False, loc="best")
     fig.suptitle("Hydrological signals are a sign competition between loading and pore pressure", fontsize=13, weight="bold")
-    fig.savefig(OUTDIR / "fig03_hydrological_competition.png", bbox_inches="tight")
+    fig.savefig(OUTDIR / "fig02_hydrological_competition.png", bbox_inches="tight")
     plt.close(fig)
 
 
@@ -227,7 +227,7 @@ def figure_04_material_sensitivity():
     ax2.legend(frameon=False)
 
     fig.suptitle("Material sensitivity controls stress conversion from velocity change", fontsize=13, weight="bold")
-    fig.savefig(OUTDIR / "fig04_material_sensitivity.png", bbox_inches="tight")
+    fig.savefig(OUTDIR / "fig03_material_sensitivity.png", bbox_inches="tight")
     plt.close(fig)
 
 
@@ -349,7 +349,7 @@ def figure_06_rheology():
     axes[1, 1].grid(True, which="both", alpha=0.25)
 
     fig.suptitle("Rheology is diagnosed from phase, hysteresis, and recovery shape", fontsize=14, weight="bold")
-    fig.savefig(OUTDIR / "fig06_rheology_diagnostics.png", bbox_inches="tight")
+    fig.savefig(OUTDIR / "fig04_rheology_diagnostics.png", bbox_inches="tight")
     plt.close(fig)
 
 

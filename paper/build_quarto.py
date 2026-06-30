@@ -33,13 +33,15 @@ from build_jgr_pdf import (  # reuse the single-source extractor
 SITE_DIR = Path(__file__).resolve().parent / "site"
 
 # Full main-text figure set for the web version (includes Figure 7).
+# Figure number -> file (citation order). Figures are embedded inline in the
+# canonical Markdown; this map is kept only as a reference/sanity list.
 MAIN_FIGURES = {
     "Figure 1": "fig01_unified_workflow.png",
-    "Figure 2": "fig02_depth_kernels.png",
-    "Figure 3": "fig03_hydrological_competition.png",
-    "Figure 4": "fig04_material_sensitivity.png",
+    "Figure 2": "fig02_hydrological_competition.png",
+    "Figure 3": "fig03_material_sensitivity.png",
+    "Figure 4": "fig04_rheology_diagnostics.png",
     "Figure 5": "fig05_anisotropy_fabric.png",
-    "Figure 6": "fig06_rheology_diagnostics.png",
+    "Figure 6": "fig06_depth_kernels.png",
     "Figure 7": "fig07_three_site_synthesis.png",
 }
 

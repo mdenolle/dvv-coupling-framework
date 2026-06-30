@@ -64,7 +64,7 @@ This paper addresses these gaps with a single contribution: a unified, nonlinear
 
 **Figure 1.** Unified workflow for interpreting ambient-noise velocity changes. The workflow connects external forcing (temperature, hydrology, surface loading, tectonics, and magmatic pressure) to stress and strain perturbations, material sensitivity parameters ($\beta$, $\mu'$, crack fabric, saturation state, and rheology), frequency-dependent $\delta v/v(f,t)$, and the diagnostic steps targeted for implementation in `codameter`.
 
-*Figures 1, 2, 3, 5, and 6 are schematic/illustrative, using synthetic $\delta v/v$ with physically realistic shapes to convey the framework's structure and diagnostics. Figures 4 and 7 and Table 2 report the quantitative three-site results derived from published measurements (§9); all numerical inputs are traced to their sources in `docs/site_analyses/provenance_tables.md`.*
+*Figures 1, 2, 4, 5, and 6 are schematic/illustrative, using synthetic $\delta v/v$ with physically realistic shapes to convey the framework's structure and diagnostics. Figures 3 and 7 and Table 2 report the quantitative three-site results derived from published measurements (§9); all numerical inputs are traced to their sources in `docs/site_analyses/provenance_tables.md`.*
 
 ---
 
@@ -191,11 +191,11 @@ Okubo et al. (2024) model $\Delta$GWL from precipitation using exponential decay
 
 ### 4.3 Competition Between Loading and Pore Pressure
 
-Fokker et al. (2021) showed that surface loading and pore-pressure diffusion produce *opposing* $\delta v/v$ effects. Our scenarios (Figure 3) quantify this for ice loading (loading dominates for impermeable media), seasonal rainfall (pore pressure typically dominates, consistent with anti-correlation observed by Clements and Denolle, 2023), and reservoir impoundment (balance evolves with drainage time).
+Fokker et al. (2021) showed that surface loading and pore-pressure diffusion produce *opposing* $\delta v/v$ effects. Our scenarios (Figure 2) quantify this for ice loading (loading dominates for impermeable media), seasonal rainfall (pore pressure typically dominates, consistent with anti-correlation observed by Clements and Denolle, 2023), and reservoir impoundment (balance evolves with drainage time).
 
-![Figure 3](../figures/main/fig03_hydrological_competition.png)
+![Figure 2](../figures/main/fig02_hydrological_competition.png)
 
-**Figure 3.** Hydrological signals are a sign competition between surface loading and pore pressure. The simplified Fokker et al. (2021) endmember shows the opposing contributions for (a) ice/snow loading, (b) seasonal rainfall, and (c) reservoir impoundment. Positive-compressive vertical loading tends to increase velocity, whereas pore-pressure increase reduces effective stress and decreases velocity.
+**Figure 2.** Hydrological signals are a sign competition between surface loading and pore pressure. The simplified Fokker et al. (2021) endmember shows the opposing contributions for (a) ice/snow loading, (b) seasonal rainfall, and (c) reservoir impoundment. Positive-compressive vertical loading tends to increase velocity, whereas pore-pressure increase reduces effective stress and decreases velocity.
 
 ### 4.4 Partially Saturated Media and Dynamic Capillary Effects
 
@@ -219,7 +219,7 @@ Shi et al. (2026) showed three key results relevant to our framework:
 
 3. **Soil structure matters.** Tillage and compaction alter the pore network, modifying capillary behavior and drainage timescales. High-disturbance soils show pronounced evaporation-driven velocity rebounds and prolonged drainage, while undisturbed soils show minimal capillary effects due to efficient infiltration through well-connected pore networks.
 
-For our unified framework, the capillary effect extends Equation 4 to partially saturated conditions. Above the water table, the effective pressure becomes saturation-dependent, and the $\delta v/v$ response to rainfall involves not just pore-pressure diffusion but also the dynamic redistribution of water between micropores and macropores. This is particularly relevant for high-frequency $\delta v/v$ measurements ($>$ 2 Hz) that sense the shallowest layers where saturation changes are largest (Oakley et al., 2021). The workflow and regime map (Figure 1; detailed frequency-depth domains in Figure S12) should therefore include a "capillary/vadose zone" domain at high frequencies and shallow depths, distinct from the saturated hydrological regime.
+For our unified framework, the capillary effect extends Equation 4 to partially saturated conditions. Above the water table, the effective pressure becomes saturation-dependent, and the $\delta v/v$ response to rainfall involves not just pore-pressure diffusion but also the dynamic redistribution of water between micropores and macropores. This is particularly relevant for high-frequency $\delta v/v$ measurements ($>$ 2 Hz) that sense the shallowest layers where saturation changes are largest (Oakley et al., 2021). The workflow and regime map (Figure 1; detailed frequency-depth domains in Figure S7) should therefore include a "capillary/vadose zone" domain at high frequencies and shallow depths, distinct from the saturated hydrological regime.
 
 ---
 
@@ -227,17 +227,17 @@ For our unified framework, the capillary effect extends Equation 4 to partially 
 
 ### 5.1 The Acoustoelastic Parameter and Its Detection
 
-The Murnaghan (1937) equation of state under hydrostatic pressure — $p = af + bf^2$ where $a = 3\lambda + 2\mu$ and $b = 15\lambda + 10\mu - 27l - 9m - n$ (Figure S8) — provides the foundation for understanding velocity–pressure relations. The acoustoelastic parameter $\beta$ captures the sensitivity magnitude, spanning three orders across materials (Figure 4; Clements and Denolle, 2023).
+The Murnaghan (1937) equation of state under hydrostatic pressure — $p = af + bf^2$ where $a = 3\lambda + 2\mu$ and $b = 15\lambda + 10\mu - 27l - 9m - n$ (Figure S8) — provides the foundation for understanding velocity–pressure relations. The acoustoelastic parameter $\beta$ captures the sensitivity magnitude, spanning three orders across materials (Figure 3; Clements and Denolle, 2023).
 
-![Figure 4](../figures/main/fig04_material_sensitivity.png)
+![Figure 3](../figures/main/fig03_material_sensitivity.png)
 
-**Figure 4.** Material sensitivity controls stress conversion from velocity change. (a) Effective $|\beta|$ spans orders of magnitude across materials, from intact crystalline rock to soft sediment. (b) Observed $\delta v/v$ amplitude ratios across Parkfield, Cascadia, and Kīlauea do not map directly to stress ratios because the conversion depends on $\beta$, $\mu'$, and shear modulus.
+**Figure 3.** Material sensitivity controls stress conversion from velocity change. (a) Effective $|\beta|$ spans orders of magnitude across materials, from intact crystalline rock to soft sediment. (b) Observed $\delta v/v$ amplitude ratios across Parkfield, Cascadia, and Kīlauea shown alongside the corresponding stress ratios.
 
-The $\delta v/v$–strain crossplot provides a diagnostic for nonlinearity (Figure 6; detailed examples in Figure S7): linear confirms third-order sufficiency, curvature indicates higher-order terms, elliptical trajectories indicate viscoelastic phase lag, and hysteresis indicates slow dynamics. Sens-Schönfelder and Eulenfeld (2019) demonstrated that Earth tides probe in-situ nonlinearity at $\sim$50 nanostrain amplitude.
+The $\delta v/v$–strain crossplot provides a diagnostic for nonlinearity (Figure 4; detailed examples in Figure S9): linear confirms third-order sufficiency, curvature indicates higher-order terms, elliptical trajectories indicate viscoelastic phase lag, and hysteresis indicates slow dynamics. Sens-Schönfelder and Eulenfeld (2019) demonstrated that Earth tides probe in-situ nonlinearity at $\sim$50 nanostrain amplitude.
 
-![Figure 6](../figures/main/fig06_rheology_diagnostics.png)
+![Figure 4](../figures/main/fig04_rheology_diagnostics.png)
 
-**Figure 6.** Rheology is diagnosed from phase, hysteresis, and recovery shape. (a) Endmember elastic, Maxwell, Kelvin-Voigt, and slow-dynamics responses to a step-like forcing. (b) $\delta v/v$–strain crossplots distinguish elastic, higher-order nonlinear, and viscoelastic lag behavior. (c) Parkfield-like dual-population model combining tectonic loading and postseismic healing. (d) Tidal probing of in-situ nonlinearity through harmonic distortion.
+**Figure 4.** Rheology is diagnosed from phase, hysteresis, and recovery shape. (a) Endmember elastic, Maxwell, Kelvin-Voigt, and slow-dynamics responses to a step-like forcing. (b) $\delta v/v$–strain crossplots distinguish elastic, higher-order nonlinear, and viscoelastic lag behavior. (c) Parkfield-like dual-population model combining tectonic loading and postseismic healing. (d) Tidal probing of in-situ nonlinearity through harmonic distortion.
 
 ### 5.2 Geological and Material Controls on $\beta$, $\mu'$, and Nonlinear Sensitivity
 
@@ -259,13 +259,13 @@ The nonlinear elastic parameters are not fundamental material constants — they
 
 The Tromp and Trampert (2018) framework (Eq. 4) shows that deviatoric stress produces directionally dependent velocity changes. For a uniaxial vertical stress $T_{33}^0$, the induced deviatoric stress is $\boldsymbol{\tau}^0 = -(T_{33}^0/3)\,\text{diag}(1,1,-2)$. Substituting into Equation 4 and evaluating for two end-member propagation geometries — vertically propagating S-waves ($\hat{\mathbf{k}} = \hat{\mathbf{z}}$, $\hat{\mathbf{a}} = \hat{\mathbf{x}}$) versus horizontally propagating S-waves with vertical polarization ($\hat{\mathbf{k}} = \hat{\mathbf{x}}$, $\hat{\mathbf{a}} = \hat{\mathbf{z}}$) — yields a velocity-change difference between these two propagation directions:
 
-$$\Delta\left(\frac{\delta V_S}{V_S}\right)_{\text{vert. vs. horiz.}} = \frac{T_{33}^0}{2\mu} \tag{*}$$
+$$\Delta\left(\frac{\delta V_S}{V_S}\right)_{\text{vert. vs. horiz.}} = \frac{T_{33}^0}{2\mu} \tag{11b}$$
 
 This directional splitting (Fokker et al., 2021, their Eqs. 9–11) is proportional to the deviatoric stress divided by the shear modulus, and is independent of $\mu'$ — meaning it exists even without nonlinear elasticity, arising purely from the stress-modified constitutive relation (Figure 5). For a fixed propagation direction, the SV-SH splitting (velocity difference between vertically and horizontally polarized shear waves) is likewise proportional to the deviatoric stress but depends on the specific geometry of propagation relative to the stress axis.
 
 ![Figure 5](../figures/main/fig05_anisotropy_fabric.png)
 
-**Figure 5.** Deviatoric stress and fracture fabric determine the observed velocity sign. (a) Directional sensitivity increases with fracture fabric strength. (b–d) Parkfield, Cascadia, and Kīlauea select different stress/strain components because the dominant loading geometry and crack fabric differ. (e) The scalar isotropic model succeeds for Cascadia but fails for Parkfield and Kīlauea.
+**Figure 5.** Deviatoric stress and fracture fabric determine the observed velocity sign. (a) Directional sensitivity increases with fracture fabric strength. (b–d) Parkfield, Cascadia, and Kīlauea select different stress/strain components because the dominant loading geometry and crack fabric differ. (e) Outcome of the scalar isotropic model by site (success at Cascadia; failure at Parkfield and Kīlauea).
 
 ### 6.2 Microcrack Closure and the Parkfield Observation
 
@@ -283,11 +283,11 @@ The logarithmic healing model (Snieder et al., 2017; Okubo et al., 2024):
 
 $$L(t) = -\int_{\tau_{\min}}^{\tau_{\max}} \frac{1}{\tau} \exp\left(-\frac{t - t_{EQ}}{\tau}\right) d\tau \tag{12}$$
 
-encodes the distribution of relaxation timescales. At Parkfield, $\tau_{\max}$ is constrained to 1–30,000 years, meaning post-2004 healing may continue today (Figure 6; detailed healing curves in Figure S9). The trade-off between healing and tectonic trend is a fundamental limitation requiring independent geodetic constraints.
+encodes the distribution of relaxation timescales. At Parkfield, $\tau_{\max}$ is constrained to 1–30,000 years, meaning post-2004 healing may continue today (Figure 4; detailed healing curves in Figure S10). The trade-off between healing and tectonic trend is a fundamental limitation requiring independent geodetic constraints.
 
 ### 7.2 Distinguishing Rheological Models
 
-Different rheologies produce distinct $\delta v/v$–strain signatures (Figure 6): elastic (linear crossplot), Maxwell (exponential decay), Kelvin-Voigt (delayed buildup), SLS (frequency-dependent dispersion, elliptical crossplot), and slow dynamics (logarithmic recovery, hysteresis). Tidal modulation (Sens-Schönfelder and Eulenfeld, 2019) provides the cleanest diagnostic at well-known forcing periods.
+Different rheologies produce distinct $\delta v/v$–strain signatures (Figure 4): elastic (linear crossplot), Maxwell (exponential decay), Kelvin-Voigt (delayed buildup), SLS (frequency-dependent dispersion, elliptical crossplot), and slow dynamics (logarithmic recovery, hysteresis). Tidal modulation (Sens-Schönfelder and Eulenfeld, 2019) provides the cleanest diagnostic at well-known forcing periods.
 
 ### 7.3 Frequency-Dependent Depth Tomography of Stress
 
@@ -295,11 +295,11 @@ A key opportunity that has been underexploited is the *frequency dependence* of 
 
 $$\frac{\delta v}{v}(f, t) = \int_0^\infty K(z, f) \cdot \frac{\delta V_S}{V_S}(z, t) \, dz \tag{13}$$
 
-where $K(z, f)$ is the Rayleigh or Love wave phase-velocity sensitivity kernel at frequency $f$ (Figure 2a). The peak sensitivity depth is approximately $V_s / (3f)$, ranging from $\sim$50 m at 2 Hz to $\sim$5 km at 0.1 Hz for typical crustal velocities.
+where $K(z, f)$ is the Rayleigh or Love wave phase-velocity sensitivity kernel at frequency $f$ (Figure 6a). The peak sensitivity depth is approximately $V_s / (3f)$, ranging from $\sim$50 m at 2 Hz to $\sim$5 km at 0.1 Hz for typical crustal velocities.
 
-![Figure 2](../figures/main/fig02_depth_kernels.png)
+![Figure 6](../figures/main/fig06_depth_kernels.png)
 
-**Figure 2.** Frequency-dependent depth sensitivity and inversion limits. (a) Schematic Rayleigh/Love sensitivity kernels showing broad, overlapping depth sensitivity for representative frequency bands. (b) Peak sensitivity depth $z_{\mathrm{peak}} \approx V_S/(3f)$ for soft sediment, weathered rock, and crystalline rock. (c) Relative uncertainty reduction for independent versus correlated frequency bands, emphasizing that depth-resolved inversion requires regularization, uncertainty propagation, and resolution tests.
+**Figure 6.** Frequency-dependent depth sensitivity and inversion limits. (a) Schematic Rayleigh/Love sensitivity kernels showing broad, overlapping depth sensitivity for representative frequency bands. (b) Peak sensitivity depth $z_{\mathrm{peak}} \approx V_S/(3f)$ for soft sediment, weathered rock, and crystalline rock. (c) Relative uncertainty reduction for independent versus correlated frequency bands.
 
 By measuring $\delta v/v$ simultaneously at multiple frequency bands (e.g., 0.1–0.5, 0.5–1.0, 1.0–2.0, 2.0–4.0 Hz, as in Okubo et al., 2024 and Ermert et al., 2023), one obtains a set of equations — one per frequency band — each sampling a different depth range. This is formally a linear inverse problem:
 
@@ -377,11 +377,11 @@ This approach has concrete applications: in volcanic settings, multi-frequency $
 
 ### 8.1 Homogeneous Half-Space
 
-The homogeneous half-space assumption fails when velocity contrasts exceed $\sim$2:1 within the sensitivity kernel (Figure 2; detailed validity tests in Figure S10). At soft sedimentary sites — such as Mexico City, where $V_S$ ranges from 50 m/s in the lake zone to 800 m/s in bedrock — the homogeneous assumption breaks down at all frequencies, requiring station-specific velocity profiles and proper sensitivity kernels (Ermert et al., 2023). At hard-rock stations above 1 Hz, sensitivity is confined to the upper few meters where the medium is more likely to be approximately uniform.
+The homogeneous half-space assumption fails when velocity contrasts exceed $\sim$2:1 within the sensitivity kernel (Figure 6; detailed validity tests in Figure S11). At soft sedimentary sites — such as Mexico City, where $V_S$ ranges from 50 m/s in the lake zone to 800 m/s in bedrock — the homogeneous assumption breaks down at all frequencies, requiring station-specific velocity profiles and proper sensitivity kernels (Ermert et al., 2023). At hard-rock stations above 1 Hz, sensitivity is confined to the upper few meters where the medium is more likely to be approximately uniform.
 
 ### 8.2 Linear Acoustoelasticity
 
-The linear acoustoelastic approximation is valid for strains below $\sim$10$^{-5}$ (Figure S11), covering tidal, thermoelastic, and most hydrological signals, but breaks down for coseismic and strong-motion strains. The regime diagram (Figure 1; detailed version in Figure S12) maps dominant processes versus frequency and depth, including the capillary/vadose zone regime at high frequencies.
+The linear acoustoelastic approximation is valid for strains below $\sim$10$^{-5}$ (Figure S12), covering tidal, thermoelastic, and most hydrological signals, but breaks down for coseismic and strong-motion strains. The regime diagram (Figure 1; detailed version in Figure S7) maps dominant processes versus frequency and depth, including the capillary/vadose zone regime at high frequencies.
 
 Table 1 summarizes the main parameters, ranges, and validity limits needed for applying the framework; the full parameter overview is provided as Table S1.
 

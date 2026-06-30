@@ -32,11 +32,11 @@ BUILD_DIR = PAPER_DIR / "build"
 # the Supporting Information together with the detailed application and S-figures.
 FIGURE_FILES = {
     "Figure 1": "figures/main/fig01_unified_workflow.png",
-    "Figure 2": "figures/main/fig02_depth_kernels.png",
-    "Figure 3": "figures/main/fig03_hydrological_competition.png",
-    "Figure 4": "figures/main/fig04_material_sensitivity.png",
+    "Figure 2": "figures/main/fig02_hydrological_competition.png",
+    "Figure 3": "figures/main/fig03_material_sensitivity.png",
+    "Figure 4": "figures/main/fig04_rheology_diagnostics.png",
     "Figure 5": "figures/main/fig05_anisotropy_fabric.png",
-    "Figure 6": "figures/main/fig06_rheology_diagnostics.png",
+    "Figure 6": "figures/main/fig06_depth_kernels.png",
 }
 
 # Three-site synthesis figure (moved to Supporting Information with §9).

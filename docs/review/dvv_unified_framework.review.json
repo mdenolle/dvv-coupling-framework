@@ -59,9 +59,10 @@
       "criterion": "C5",
       "subagent": "S-FD.3",
       "tier": "Fair",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "github_issue": 14,
-      "summary": "figures not in numerical citation order (Fig 2; SI S12)"
+      "summary": "figures not in numerical citation order (Fig 2; SI S12)",
+      "resolved_in": "issue #14"
     },
     {
       "id": "M6",
@@ -106,18 +107,21 @@
       "criterion": "C5",
       "subagent": "S-FD.9",
       "tier": "Good",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "github_issue": 14,
-      "summary": "number the starred Eq.(*)"
+      "summary": "number the starred Eq.(*)",
+      "resolved_in": "issue #14"
     },
     {
       "id": "m5",
       "criterion": "C5",
       "subagent": "S-FD.4",
       "tier": "Good",
-      "status": "OPEN",
+      "status": "PARTIALLY ADDRESSED",
       "github_issue": 14,
-      "summary": "trim interpretive captions; reconcile in-figure titles"
+      "summary": "trim interpretive captions; reconcile in-figure titles",
+      "resolved_in": "issue #14",
+      "note": "caption interpretive clauses trimmed (Figs 3b,5e,6c); in-figure title text reconciliation deferred (needs figure regeneration)"
     },
     {
       "id": "m6",
@@ -185,11 +189,11 @@
     "C2": "Good (M3/M4 resolved)",
     "C3": "Good",
     "C4": "Good",
-    "C5": "Fair",
+    "C5": "Good (M1/M5/m4 resolved; m5 partial)",
     "C6": "Good",
     "C7": "Good",
     "C8": "Good"
   },
   "history": [],
-  "notes": "Iteration 1 full review. C8 checked at orchestrator level: AI use disclosed (sole author, AGU-compliant), CC BY 4.0, funding acknowledged; only compliance gap is the pending DOI (M2). For iteration 2, supply a before/after of the manuscript so the review reconciles each ledger ID and raises new findings only on changed text. | 2026-06-29: M1 (abstract trimmed to 244 words + Key Points added), m1 (novelty front-loaded in abstract & §1.4), m2 (stakes sentence in §1.2) RESOLVED via issue #12. | 2026-06-29: M3 (Eq.9b: dv/v thermoelastic sensitivity = mu' for S-waves, unifies the parameter set; §10.1 rewritten as derived), M4 (Kilauea long-term relabeled apparent ratio R_app, not elastic beta), m3 (Eq.5 endmember vs Eq.4 clarified in §10.4) RESOLVED via issue #13."
+  "notes": "Iteration 1 full review. C8 checked at orchestrator level: AI use disclosed (sole author, AGU-compliant), CC BY 4.0, funding acknowledged; only compliance gap is the pending DOI (M2). For iteration 2, supply a before/after of the manuscript so the review reconciles each ledger ID and raises new findings only on changed text. | 2026-06-29: M1 (abstract trimmed to 244 words + Key Points added), m1 (novelty front-loaded in abstract & §1.4), m2 (stakes sentence in §1.2) RESOLVED via issue #12. | 2026-06-29: M3 (Eq.9b: dv/v thermoelastic sensitivity = mu' for S-waves, unifies the parameter set; §10.1 rewritten as derived), M4 (Kilauea long-term relabeled apparent ratio R_app, not elastic beta), m3 (Eq.5 endmember vs Eq.4 clarified in §10.4) RESOLVED via issue #13. | 2026-06-29: M5 (main figures renumbered to citation order 1-7 + SI S1-S12 reordered; files renamed; generator+build updated), m4 (starred eq numbered 11b), m5 (interpretive captions trimmed; in-figure titles deferred) via issue #14."
 }

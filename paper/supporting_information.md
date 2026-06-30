@@ -18,17 +18,17 @@ This file lists the figures moved out of the main JGR Solid Earth manuscript. Th
 
 **Figure S6.** Groundwater-level model following Okubo et al. (2024), including synthetic precipitation, $\Delta$GWL response for different hydrological memory timescales, and resulting hydrological $\delta v/v$. Corresponds to `figures/notebooks/fig06_gwl_model.png`.
 
-**Figure S7.** Detailed nonlinear-elasticity diagnostics from $\delta v/v$--strain crossplots, including tidal/thermal strain, linear and nonlinear velocity response, and curvature from higher-order nonlinearity. Corresponds to `figures/notebooks/fig09_nonlinear_detection.png`.
+**Figure S7.** Detailed regime diagram showing which physical process dominates $\delta v/v$ as a function of measurement frequency and depth sensitivity, including capillary/vadose-zone, hydrological, thermoelastic, and tectonic domains. Corresponds to `figures/notebooks/fig18_regime_diagram.png`.
 
 **Figure S8.** Murnaghan (1937) equation-of-state diagnostics, including pressure-volume relations and velocity versus confining pressure for different nonlinear response strengths. Corresponds to `figures/notebooks/fig10_murnaghan_EOS.png`.
 
-**Figure S9.** Logarithmic healing models, including sensitivity to $\tau_{\max}$ and $\tau_{\min}$, a Parkfield-like synthetic time series, and the $\sim 1/t$ healing-rate decay. Corresponds to `figures/notebooks/fig13_healing_models.png`.
+**Figure S9.** Detailed nonlinear-elasticity diagnostics from $\delta v/v$--strain crossplots, including tidal/thermal strain, linear and nonlinear velocity response, and curvature from higher-order nonlinearity. Corresponds to `figures/notebooks/fig09_nonlinear_detection.png`.
 
-**Figure S10.** Detailed homogeneous-half-space validity tests, including sensitivity kernels, peak sensitivity depth versus frequency, and relative error from velocity contrasts within the sensitivity kernel. Corresponds to `figures/notebooks/fig15_homogeneous_validity.png`.
+**Figure S10.** Logarithmic healing models, including sensitivity to $\tau_{\max}$ and $\tau_{\min}$, a Parkfield-like synthetic time series, and the $\sim 1/t$ healing-rate decay. Corresponds to `figures/notebooks/fig13_healing_models.png`.
 
-**Figure S11.** Validity of the linear acoustoelastic approximation $\delta v/v = \beta\epsilon_{kk}$ as a function of strain magnitude, including tidal, thermoelastic, and coseismic/strong-motion regimes. Corresponds to `figures/notebooks/fig16_linearity_validity.png`.
+**Figure S11.** Detailed homogeneous-half-space validity tests, including sensitivity kernels, peak sensitivity depth versus frequency, and relative error from velocity contrasts within the sensitivity kernel. Corresponds to `figures/notebooks/fig15_homogeneous_validity.png`.
 
-**Figure S12.** Detailed regime diagram showing which physical process dominates $\delta v/v$ as a function of measurement frequency and depth sensitivity, including capillary/vadose-zone, hydrological, thermoelastic, and tectonic domains. Corresponds to `figures/notebooks/fig18_regime_diagram.png`.
+**Figure S12.** Validity of the linear acoustoelastic approximation $\delta v/v = \beta\epsilon_{kk}$ as a function of strain magnitude, including tidal, thermoelastic, and coseismic/strong-motion regimes. Corresponds to `figures/notebooks/fig16_linearity_validity.png`.
 
 ## Supporting Table Caption
 

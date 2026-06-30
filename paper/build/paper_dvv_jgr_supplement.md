@@ -216,8 +216,8 @@ The three-site comparison reveals a clear pattern: **the isotropic formulation w
 \clearpage
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/notebooks/fig09_nonlinear_detection.png}
-\caption{\textbf{Figure S7.} Detailed nonlinear-elasticity diagnostics from $\delta v/v$--strain crossplots, including tidal/thermal strain, linear and nonlinear velocity response, and curvature from higher-order nonlinearity}
+\includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/notebooks/fig18_regime_diagram.png}
+\caption{\textbf{Figure S7.} Detailed regime diagram showing which physical process dominates $\delta v/v$ as a function of measurement frequency and depth sensitivity, including capillary/vadose-zone, hydrological, thermoelastic, and tectonic domains}
 \end{figure}
 
 
@@ -232,8 +232,16 @@ The three-site comparison reveals a clear pattern: **the isotropic formulation w
 \clearpage
 \begin{figure}[p]
 \centering
+\includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/notebooks/fig09_nonlinear_detection.png}
+\caption{\textbf{Figure S9.} Detailed nonlinear-elasticity diagnostics from $\delta v/v$--strain crossplots, including tidal/thermal strain, linear and nonlinear velocity response, and curvature from higher-order nonlinearity}
+\end{figure}
+
+
+\clearpage
+\begin{figure}[p]
+\centering
 \includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/notebooks/fig13_healing_models.png}
-\caption{\textbf{Figure S9.} Logarithmic healing models, including sensitivity to $\tau_{\max}$ and $\tau_{\min}$, a Parkfield-like synthetic time series, and the $\sim 1/t$ healing-rate decay}
+\caption{\textbf{Figure S10.} Logarithmic healing models, including sensitivity to $\tau_{\max}$ and $\tau_{\min}$, a Parkfield-like synthetic time series, and the $\sim 1/t$ healing-rate decay}
 \end{figure}
 
 
@@ -241,7 +249,7 @@ The three-site comparison reveals a clear pattern: **the isotropic formulation w
 \begin{figure}[p]
 \centering
 \includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/notebooks/fig15_homogeneous_validity.png}
-\caption{\textbf{Figure S10.} Detailed homogeneous-half-space validity tests, including sensitivity kernels, peak sensitivity depth versus frequency, and relative error from velocity contrasts within the sensitivity kernel}
+\caption{\textbf{Figure S11.} Detailed homogeneous-half-space validity tests, including sensitivity kernels, peak sensitivity depth versus frequency, and relative error from velocity contrasts within the sensitivity kernel}
 \end{figure}
 
 
@@ -249,15 +257,7 @@ The three-site comparison reveals a clear pattern: **the isotropic formulation w
 \begin{figure}[p]
 \centering
 \includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/notebooks/fig16_linearity_validity.png}
-\caption{\textbf{Figure S11.} Validity of the linear acoustoelastic approximation $\delta v/v = \beta\epsilon_{kk}$ as a function of strain magnitude, including tidal, thermoelastic, and coseismic/strong-motion regimes}
-\end{figure}
-
-
-\clearpage
-\begin{figure}[p]
-\centering
-\includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/notebooks/fig18_regime_diagram.png}
-\caption{\textbf{Figure S12.} Detailed regime diagram showing which physical process dominates $\delta v/v$ as a function of measurement frequency and depth sensitivity, including capillary/vadose-zone, hydrological, thermoelastic, and tectonic domains}
+\caption{\textbf{Figure S12.} Validity of the linear acoustoelastic approximation $\delta v/v = \beta\epsilon_{kk}$ as a function of strain magnitude, including tidal, thermoelastic, and coseismic/strong-motion regimes}
 \end{figure}
 
 
