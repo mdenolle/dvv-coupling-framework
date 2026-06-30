@@ -64,9 +64,9 @@ $\delta v/v$ records is deferred to future work (§10.5).
 """
 
 AGU_KEYPOINTS = [
-    "A unified framework links seismic velocity changes to stress strain hydrology and rheology",
-    "Directional crack fabric explains Parkfield velocity changes tracking axial contraction",
-    "Coda window metrics make velocity change processing reproducible for codameter",
+    "A unified nonlinear-elastic framework treats velocity change dv/v as both a stress meter and a strain meter",
+    "The dominant fracture fabric sets which strain component dv/v tracks, predicting when dv/v = beta*strain succeeds or fails",
+    "Applied to Parkfield, Cascadia, and Kilauea, the framework recovers stress at depth consistent with geodetic and borehole data",
 ]
 
 PLAIN_LANGUAGE_SUMMARY = """Small changes in seismic wave speed can reveal how rocks, sediments, and fluids respond to environmental and tectonic forcing. This paper connects several explanations that are often treated separately, including temperature, groundwater, surface loading, earthquake damage, volcanic pressure changes, and long term tectonic strain. The result is a practical framework for deciding when velocity changes behave like a stress meter, when they behave like a strain meter, and when additional material or hydrological effects must be modeled."""
